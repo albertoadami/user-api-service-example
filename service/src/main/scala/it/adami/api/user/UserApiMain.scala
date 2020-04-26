@@ -2,30 +2,27 @@ package it.adami.api.user
 
 import cats.effect.{ExitCode, IO, IOApp}
 import org.http4s.server.blaze.BlazeServerBuilder
-import cats.effect._
+import it.adami.api.user.http.routes.HealthRoutes
 import cats.implicits._
-import org.http4s.HttpRoutes
-import org.http4s.syntax._
-import org.http4s.dsl.io._
 import org.http4s.implicits._
-import org.http4s.server.blaze._
 
 object UserApiMain extends IOApp {
 
-  val healthService = HttpRoutes
-    .of[IO] {
-      case GET -> Root / "health" =>
-        NoContent()
-    }
-    .orNotFound
+  def run(args: List[String]): IO[ExitCode] = {
+    val routes = Seq(
+      new HealthRoutes
+    ).map(_.routes)
+      .reduce(_ <+> _)
 
-  def run(args: List[String]): IO[ExitCode] =
+    val httpApp = routes.orNotFound
+
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")
-      .withHttpApp(healthService)
+      .withHttpApp(httpApp)
       .serve
       .compile
       .drain
       .as(ExitCode.Success)
+  }
 
 }

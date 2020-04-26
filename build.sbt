@@ -17,7 +17,9 @@ lazy val service = (project in file("service"))
   .settings(commonSettings)
   .settings(
     name := "user-api",
-    libraryDependencies ++= http4sDependencies
+    scalacOptions += "-Ypartial-unification",
+      libraryDependencies ++=
+      http4sDependencies
   )
 
 
