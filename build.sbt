@@ -10,6 +10,13 @@ val coverageSettings = Seq(
   coverageExcludedPackages := ".*user"
 )
 
+val dockerSettings = Seq(
+  dockerBaseImage := "openjdk:8-slim",
+  daemonUserUid in Docker := None,
+  daemonUser in Docker    := "daemon",
+  dockerExposedPorts := Seq(8080)
+)
+
 
 val http4sVersion = "0.21.1"
 lazy val http4sDependencies = Seq(
@@ -22,7 +29,9 @@ lazy val testDependencies = Seq(
 )
 
 lazy val service = (project in file("service"))
+  .enablePlugins(DockerPlugin, JavaServerAppPackaging)
   .settings(commonSettings)
+  .settings(dockerSettings)
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
