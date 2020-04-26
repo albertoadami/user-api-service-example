@@ -6,6 +6,13 @@ val commonSettings = Seq(
   version := "0.1"
 )
 
+val dockerSettings = Seq(
+  dockerBaseImage := "openjdk:8-slim",
+  daemonUserUid in Docker := None,
+  daemonUser in Docker    := "daemon",
+  dockerExposedPorts := Seq(8080)
+)
+
 
 val http4sVersion = "0.21.1"
 lazy val http4sDependencies = Seq(
@@ -14,7 +21,9 @@ lazy val http4sDependencies = Seq(
 )
 
 lazy val service = (project in file("service"))
+  .enablePlugins(DockerPlugin, JavaServerAppPackaging)
   .settings(commonSettings)
+  .settings(dockerSettings)
   .settings(
     name := "user-api",
     libraryDependencies ++= http4sDependencies
