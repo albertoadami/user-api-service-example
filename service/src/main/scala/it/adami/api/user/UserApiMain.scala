@@ -25,7 +25,8 @@ object UserApiMain extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] = {
 
-    val executionContext: ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
+    val executionContext: ExecutionContext =
+      ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
 
     BlazeServerBuilder[IO]
       .withExecutionContext(executionContext)
