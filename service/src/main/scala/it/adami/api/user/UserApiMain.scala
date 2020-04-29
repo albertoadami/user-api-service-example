@@ -1,29 +1,24 @@
 package it.adami.api.user
 
-import java.util.concurrent.{Executor, Executors}
+import java.util.concurrent.Executors
 
 import cats.effect.{ExitCode, IO, IOApp}
 import org.http4s.server.blaze.BlazeServerBuilder
-import cats.effect._
+import it.adami.api.user.http.routes.HealthRoutes
 import cats.implicits._
-import org.http4s.HttpRoutes
-import org.http4s.syntax._
-import org.http4s.dsl.io._
 import org.http4s.implicits._
-import org.http4s.server.blaze._
 
 import scala.concurrent.ExecutionContext
 
 object UserApiMain extends IOApp {
 
-  val healthService = HttpRoutes
-    .of[IO] {
-      case GET -> Root / "health" =>
-        NoContent()
-    }
-    .orNotFound
-
   def run(args: List[String]): IO[ExitCode] = {
+    val routes = Seq(
+      new HealthRoutes
+    ).map(_.routes)
+      .reduce(_ <+> _)
+
+    val httpApp = routes.orNotFound
 
     val executionContext: ExecutionContext =
       ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
@@ -31,7 +26,7 @@ object UserApiMain extends IOApp {
     BlazeServerBuilder[IO]
       .withExecutionContext(executionContext)
       .bindHttp(8080, "0.0.0.0")
-      .withHttpApp(healthService)
+      .withHttpApp(httpApp)
       .serve
       .compile
       .drain

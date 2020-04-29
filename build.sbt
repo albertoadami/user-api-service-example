@@ -1,9 +1,13 @@
-import sbt.Keys.scalaVersion
-
 val commonSettings = Seq(
   organization := "it.adami",
-  scalaVersion := "2.12.6",
-  version := "0.1"
+  scalaVersion := "2.12.6"
+)
+
+val coverageSettings = Seq(
+  coverageEnabled := true,
+  coverageMinimum := 80,
+  coverageFailOnMinimum := true,
+  coverageExcludedPackages := ".*user"
 )
 
 
@@ -13,15 +17,23 @@ lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-blaze-server" % http4sVersion
 )
 
+lazy val testDependencies = Seq(
+  "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+)
+
 lazy val service = (project in file("service"))
   .settings(commonSettings)
   .settings(
     name := "user-api",
-    libraryDependencies ++= http4sDependencies
+    scalacOptions += "-Ypartial-unification",
+    libraryDependencies ++=
+      http4sDependencies ++ 
+      testDependencies
   )
+  .settings(coverageSettings: _*)
 
 
-lazy val root = (project in file("."))
+lazy val `user-api` = (project in file("."))
   .aggregate(service)
   .settings(commonSettings)
   .settings(
