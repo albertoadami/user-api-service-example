@@ -1,11 +1,10 @@
 package it.adami.api.user.http.routes
 
+import it.adami.api.user.SpecBase
 import org.http4s.{Request, Status}
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import org.http4s.implicits._
 
-class HealthRoutesSpec extends AnyWordSpec with Matchers {
+class HealthRoutesSpec extends SpecBase {
 
   private val healthRoutes = (new HealthRoutes).routes.orNotFound
 
