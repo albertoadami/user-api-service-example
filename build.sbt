@@ -43,7 +43,8 @@ lazy val circeDependencies = Seq(
 )
 
 lazy val testDependencies = Seq(
-  "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.1.1" % Test,
+  "org.mockito" %% "mockito-scala" % "1.14.0" % Test
 )
 
 lazy val service = (project in file("service"))
