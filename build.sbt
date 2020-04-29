@@ -17,6 +17,13 @@ val dockerSettings = Seq(
   dockerExposedPorts := Seq(8080)
 )
 
+val dockerSettings = Seq(
+  dockerBaseImage := "openjdk:8-slim",
+  daemonUserUid in Docker := None,
+  daemonUser in Docker    := "daemon",
+  dockerExposedPorts := Seq(8080)
+)
+
 
 val http4sVersion = "0.21.1"
 lazy val http4sDependencies = Seq(
