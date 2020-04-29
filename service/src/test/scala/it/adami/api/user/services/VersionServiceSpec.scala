@@ -5,7 +5,7 @@ import it.adami.api.user.SpecBase
 
 class VersionServiceSpec extends SpecBase {
 
- private val versionService = new VersionService
+  private val versionService = new VersionService
 
   "VersionService" should {
     "return the version information inside a json" in {
