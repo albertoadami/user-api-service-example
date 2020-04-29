@@ -11,7 +11,7 @@ val coverageSettings = Seq(
   coverageEnabled := true,
   coverageMinimum := 80,
   coverageFailOnMinimum := true,
-  coverageExcludedPackages := ".*user"
+  coverageExcludedPackages := ".*user;.*user.config"
 )
 
 
@@ -35,6 +35,11 @@ lazy val loggingDependencies = Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 
+lazy val circeDependencies = Seq(
+  "io.circe" %% "circe-config" % "0.7.0",
+  "io.circe"   %% "circe-generic" % "0.13.0"
+)
+
 lazy val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.1.1" % "test"
 )
@@ -49,6 +54,7 @@ lazy val service = (project in file("service"))
     libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++
+      circeDependencies ++
       testDependencies
   )
   .settings(coverageSettings: _*)
