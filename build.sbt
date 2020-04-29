@@ -1,6 +1,10 @@
 val commonSettings = Seq(
   organization := "it.adami",
-  scalaVersion := "2.12.6"
+  scalaVersion := "2.12.6",
+  unusedCompileDependenciesFilter -=
+    moduleFilter("org.slf4j", "log4j-over-slf4j") ,
+  unusedCompileDependenciesFilter -=
+    moduleFilter("ch.qos.logback", "logback-classic")
 )
 
 val coverageSettings = Seq(
@@ -26,9 +30,9 @@ lazy val http4sDependencies = Seq(
 )
 
 lazy val loggingDependencies = Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "org.slf4j" % "log4j-over-slf4j" % "1.7.30",
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
+  "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 
 lazy val testDependencies = Seq(
