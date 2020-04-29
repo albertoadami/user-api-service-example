@@ -25,6 +25,12 @@ lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-blaze-server" % http4sVersion
 )
 
+lazy val loggingDependencies = Seq(
+  "org.slf4j" % "log4j-over-slf4j" % "1.7.30",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
+)
+
 lazy val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.1.1" % "test"
 )
@@ -37,7 +43,8 @@ lazy val service = (project in file("service"))
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
     libraryDependencies ++=
-      http4sDependencies ++ 
+      http4sDependencies ++
+      loggingDependencies ++
       testDependencies
   )
   .settings(coverageSettings: _*)
