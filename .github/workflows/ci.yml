@@ -23,3 +23,5 @@ jobs:
       run: sbt test
     - name: Check coverage
       run: sbt coverageReport
+    - name: Build docker image
+      run: sbt docker:publishLocal
