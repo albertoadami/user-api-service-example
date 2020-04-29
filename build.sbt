@@ -1,9 +1,6 @@
-import sbt.Keys.scalaVersion
-
 val commonSettings = Seq(
   organization := "it.adami",
-  scalaVersion := "2.12.6",
-  version := "0.1"
+  scalaVersion := "2.12.6"
 )
 
 val coverageSettings = Seq(
