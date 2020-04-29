@@ -24,16 +24,15 @@ object UserApiMain extends IOApp with LazyLogging {
 
     val httpApp = Logger.httpApp(logHeaders = true, logBody = true)(routes.orNotFound)
 
-    val executionContext: ExecutionContext =
-      ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
-
     logger.info("Starting service...")
 
     AppConfig.load flatMap { config =>
       val serviceConfig = config.service
 
-      BlazeServerBuilder[IO]
-        .withExecutionContext(executionContext)
+      val executionContext: ExecutionContext =
+        ExecutionContext.fromExecutor(Executors.newFixedThreadPool(serviceConfig.threads))
+
+      BlazeServerBuilder[IO](executionContext)
         .bindHttp(serviceConfig.port, serviceConfig.host)
         .withHttpApp(httpApp)
         .serve
