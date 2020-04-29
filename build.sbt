@@ -10,12 +10,6 @@ val coverageSettings = Seq(
   coverageExcludedPackages := ".*user"
 )
 
-val dockerSettings = Seq(
-  dockerBaseImage := "openjdk:8-slim",
-  daemonUserUid in Docker := None,
-  daemonUser in Docker    := "daemon",
-  dockerExposedPorts := Seq(8080)
-)
 
 val dockerSettings = Seq(
   dockerBaseImage := "openjdk:8-slim",
