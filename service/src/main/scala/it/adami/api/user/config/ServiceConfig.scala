@@ -1,3 +1,3 @@
 package it.adami.api.user.config
 
-case class ServiceConfig(host: String, port: Int)
+case class ServiceConfig(host: String, port: Int, threads: Int)
