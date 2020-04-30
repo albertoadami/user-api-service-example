@@ -26,7 +26,8 @@ val dockerSettings = Seq(
 val http4sVersion = "0.21.4"
 lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-dsl" % http4sVersion,
-  "org.http4s" %% "http4s-blaze-server" % http4sVersion
+  "org.http4s" %% "http4s-blaze-server" % http4sVersion,
+  "org.http4s" %% "http4s-circe" % http4sVersion
 )
 
 lazy val loggingDependencies = Seq(
@@ -37,20 +38,23 @@ lazy val loggingDependencies = Seq(
 
 lazy val circeDependencies = Seq(
   "io.circe" %% "circe-config" % "0.7.0",
-  "io.circe"   %% "circe-generic" % "0.13.0"
+  "io.circe"   %% "circe-generic" % "0.13.0",
+  "io.circe" %% "circe-literal" % "0.13.0"
 )
 
 lazy val testDependencies = Seq(
-  "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.1.1" % Test,
+  "org.mockito" %% "mockito-scala" % "1.14.0" % Test
 )
 
 lazy val service = (project in file("service"))
-  .enablePlugins(DockerPlugin, JavaServerAppPackaging)
+  .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
   .settings(commonSettings)
   .settings(dockerSettings)
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
+    buildInfoOptions += BuildInfoOption.ToJson,
     libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++
