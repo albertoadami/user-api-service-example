@@ -24,6 +24,6 @@ jobs:
     - name: Check coverage
       run: sbt coverageReport
     - name: Build docker image
-      run: sbt 'project service; set coverageEnabled := false; docker:publishLocal'
+      run: sbt 'docker:publishLocal'
     - name: Run end-to-end Test
       run:  sbt 'project end-to-end; test'

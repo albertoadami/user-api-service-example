@@ -1,4 +1,6 @@
 import Dependencies._
+import CoverageSettings._
+import DockerSettings._
 
 val commonSettings = Seq(
   organization := "it.adami",
@@ -13,20 +15,6 @@ val buildInfoSettings = Seq(
   buildInfoOptions += BuildInfoOption.ToJson
 )
 
-val coverageSettings = Seq(
-  coverageEnabled := true,
-  coverageMinimum := 80,
-  coverageFailOnMinimum := true,
-  coverageExcludedPackages := ".*user;.*user.config"
-)
-
-
-val dockerSettings = Seq(
-  dockerBaseImage := "openjdk:8-slim",
-  daemonUserUid in Docker := None,
-  daemonUser in Docker    := "daemon",
-  dockerExposedPorts := Seq(8080)
-)
 
 lazy val service = (project in file("service"))
   .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
@@ -40,8 +28,8 @@ lazy val service = (project in file("service"))
       testDependencies
   )
   .settings(commonSettings: _*)
-  .settings(dockerSettings: _*)
-  .settings(coverageSettings: _*)
+  .settings(DockerSettings.settings: _*)
+  .settings(CoverageSettings.settings: _*)
   .settings(buildInfoSettings: _*)
 
 lazy val `end-to-end` = (project in file("end-to-end"))
@@ -58,7 +46,6 @@ lazy val `end-to-end` = (project in file("end-to-end"))
   )
   .settings(commonSettings: _*)
   .settings(buildInfoSettings: _*)
-  .settings(dockerSettings: _*)
 
 
 lazy val `user-api` = (project in file("."))
