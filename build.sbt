@@ -21,15 +21,16 @@ lazy val service = (project in file("service"))
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
-    libraryDependencies ++=
+    coverageExcludedPackages := ".*user;.*user.config",
+      libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++
       circeDependencies ++
       testDependencies
   )
   .settings(commonSettings: _*)
-  .settings(DockerSettings.settings: _*)
   .settings(CoverageSettings.settings: _*)
+  .settings(DockerSettings.settings: _*)
   .settings(buildInfoSettings: _*)
 
 lazy val `end-to-end` = (project in file("end-to-end"))
