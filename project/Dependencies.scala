@@ -21,6 +21,13 @@ object Dependencies {
     "io.circe" %% "circe-literal" % "0.13.0"
   )
 
+  val doobieVersion = "0.8.8"
+  val doobieDependencies = Seq(
+    "org.tpolecat" %% "doobie-core"      % doobieVersion,
+    "org.tpolecat" %% "doobie-postgres"  % doobieVersion,
+    "org.tpolecat"          %% "doobie-hikari"          % doobieVersion
+  )
+
   lazy val endToEndDependencies = Seq(
     "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % Test,
     "org.http4s" %% "http4s-blaze-client" % http4sVersion % Test,
@@ -29,7 +36,8 @@ object Dependencies {
 
   lazy val testDependencies = Seq(
     "org.scalatest" %% "scalatest" % "3.1.1" % Test,
-    "org.mockito" %% "mockito-scala" % "1.14.0" % Test
+    "org.mockito" %% "mockito-scala" % "1.14.0" % Test,
+    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % Test
   )
 
 }

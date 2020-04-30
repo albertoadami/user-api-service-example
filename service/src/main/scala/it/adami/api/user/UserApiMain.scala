@@ -2,7 +2,7 @@ package it.adami.api.user
 
 import java.util.concurrent.Executors
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{ContextShift, ExitCode, IO, IOApp}
 import org.http4s.server.blaze.BlazeServerBuilder
 import it.adami.api.user.http.routes.{HealthRoutes, VersionRoutes}
 import cats.implicits._
@@ -12,6 +12,10 @@ import it.adami.api.user.services.VersionService
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.middleware.Logger
+import doobie._
+import doobie.implicits._
+import cats.effect.IO
+import it.adami.api.user.repository.ConnectionHelper
 
 import scala.concurrent.ExecutionContext
 
@@ -30,9 +34,12 @@ object UserApiMain extends IOApp with LazyLogging {
 
     AppConfig.load flatMap { config =>
       val serviceConfig = config.service
+      val postgresConfig = config.postgresConfig
 
-      val executionContext: ExecutionContext =
+      implicit val executionContext: ExecutionContext =
         ExecutionContext.fromExecutor(Executors.newFixedThreadPool(serviceConfig.threads))
+
+      ConnectionHelper.generateTransactor(postgresConfig)(contextShift, executionContext)
 
       val router = Router(
         "" -> (new HealthRoutes).routes,

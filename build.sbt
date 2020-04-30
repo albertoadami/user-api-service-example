@@ -26,6 +26,7 @@ lazy val service = (project in file("service"))
       http4sDependencies ++
       loggingDependencies ++
       circeDependencies ++
+      doobieDependencies ++
       testDependencies
   )
   .settings(commonSettings: _*)
