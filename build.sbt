@@ -1,3 +1,5 @@
+import Dependencies._
+
 val commonSettings = Seq(
   organization := "it.adami",
   scalaVersion := "2.12.6",
@@ -5,6 +7,10 @@ val commonSettings = Seq(
     moduleFilter("org.slf4j", "log4j-over-slf4j") ,
   unusedCompileDependenciesFilter -=
     moduleFilter("ch.qos.logback", "logback-classic")
+)
+
+val buildInfoSettings = Seq(
+  buildInfoOptions += BuildInfoOption.ToJson
 )
 
 val coverageSettings = Seq(
@@ -22,54 +28,24 @@ val dockerSettings = Seq(
   dockerExposedPorts := Seq(8080)
 )
 
-
-val http4sVersion = "0.21.4"
-lazy val http4sDependencies = Seq(
-  "org.http4s" %% "http4s-dsl" % http4sVersion,
-  "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-  "org.http4s" %% "http4s-circe" % http4sVersion
-)
-
-lazy val loggingDependencies = Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-  "org.slf4j" % "log4j-over-slf4j" % "1.7.30",
-  "ch.qos.logback" % "logback-classic" % "1.2.3"
-)
-
-lazy val circeDependencies = Seq(
-  "io.circe" %% "circe-config" % "0.7.0",
-  "io.circe"   %% "circe-generic" % "0.13.0",
-  "io.circe" %% "circe-literal" % "0.13.0"
-)
-
-lazy val itDependencies = Seq(
-  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % "test",
-  "org.http4s" %% "http4s-blaze-client" % http4sVersion
-)
-
-lazy val testDependencies = Seq(
-  "org.scalatest" %% "scalatest" % "3.1.1" % Test,
-  "org.mockito" %% "mockito-scala" % "1.14.0" % Test
-)
-
 lazy val service = (project in file("service"))
   .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
-  .settings(commonSettings)
-  .settings(dockerSettings)
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
-    buildInfoOptions += BuildInfoOption.ToJson,
     libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++
       circeDependencies ++
       testDependencies
   )
+  .settings(commonSettings: _*)
+  .settings(dockerSettings: _*)
   .settings(coverageSettings: _*)
+  .settings(buildInfoSettings: _*)
 
 lazy val `end-to-end` = (project in file("end-to-end"))
-  .settings(commonSettings)
+  .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "end-to-end",
     scalacOptions += "-Ypartial-unification",
@@ -78,8 +54,11 @@ lazy val `end-to-end` = (project in file("end-to-end"))
       circeDependencies ++
       testDependencies ++
       loggingDependencies ++
-      itDependencies
+      endToEndDependencies
   )
+  .settings(commonSettings: _*)
+  .settings(buildInfoSettings: _*)
+  .settings(dockerSettings: _*)
 
 
 lazy val `user-api` = (project in file("."))

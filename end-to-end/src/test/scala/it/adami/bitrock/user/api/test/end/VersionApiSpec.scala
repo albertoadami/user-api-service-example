@@ -6,12 +6,16 @@ import org.http4s.{Request, Status, Uri}
 
 class VersionApiSpec extends SpecBase with ForAllTestContainer {
 
-  "VersionApi" should "returns 200 status when version endpoint is called" in {
-    val basePath = s"http://$serviceHost/api/0.1/version"
-    client
-      .status(req = Request[IO](uri = Uri.unsafeFromString(basePath)))
-      .map(_ shouldBe Status.Ok)
-      .unsafeToFuture
+  "VersionApi" when {
+    "GET /api/0.1/version is called" should {
+      "return Ok with the version information" in {
+        client
+          .status(req = Request[IO](uri = Uri.unsafeFromString(versionApiPath)))
+          .map(_ shouldBe Status.Ok)
+          .unsafeToFuture
 
+      }
+    }
   }
+
 }
