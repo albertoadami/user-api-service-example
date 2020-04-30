@@ -42,6 +42,11 @@ lazy val circeDependencies = Seq(
   "io.circe" %% "circe-literal" % "0.13.0"
 )
 
+lazy val itDependencies = Seq(
+  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % "test",
+  "org.http4s" %% "http4s-blaze-client" % http4sVersion
+)
+
 lazy val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
   "org.mockito" %% "mockito-scala" % "1.14.0" % Test
@@ -62,6 +67,19 @@ lazy val service = (project in file("service"))
       testDependencies
   )
   .settings(coverageSettings: _*)
+
+lazy val `end-to-end` = (project in file("end-to-end"))
+  .settings(commonSettings)
+  .settings(
+    name := "end-to-end",
+    scalacOptions += "-Ypartial-unification",
+    libraryDependencies ++=
+      http4sDependencies ++
+      circeDependencies ++
+      testDependencies ++
+      loggingDependencies ++
+      itDependencies
+  )
 
 
 lazy val `user-api` = (project in file("."))
