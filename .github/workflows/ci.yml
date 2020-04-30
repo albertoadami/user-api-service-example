@@ -25,3 +25,5 @@ jobs:
       run: sbt coverageReport
     - name: Build docker image
       run: sbt docker:publishLocal
+    - name: Run end-to-end Test
+      run:  sbt 'project end-to-end test'
