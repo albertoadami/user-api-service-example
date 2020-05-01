@@ -18,7 +18,6 @@ class VersionRoutesSpec extends SpecBase with MockitoSugar {
       "sbtVersion" -> Json.fromString("my-sbt-version")
     )
 
-
   private val versionService = mock[VersionService]
   when(versionService.version).thenReturn(mockVersionResponse)
   private val versionRoutes = new VersionRoutes(versionService).routes.orNotFound
