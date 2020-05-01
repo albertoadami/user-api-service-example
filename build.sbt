@@ -31,6 +31,10 @@ lazy val service = (project in file("service"))
       doobieDependencies ++
       testDependencies
   )
+  .configs(IntegrationTest)
+  .settings(
+    Defaults.itSettings
+  )
   .settings(commonSettings: _*)
   .settings(CoverageSettings.settings: _*)
   .settings(DockerSettings.settings: _*)

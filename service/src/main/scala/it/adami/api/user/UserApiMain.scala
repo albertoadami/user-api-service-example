@@ -15,7 +15,7 @@ import org.http4s.server.middleware.Logger
 import doobie._
 import doobie.implicits._
 import cats.effect.IO
-import it.adami.api.user.repository.ConnectionHelper
+import it.adami.api.user.repository.ConnectionBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -39,7 +39,7 @@ object UserApiMain extends IOApp with LazyLogging {
       implicit val executionContext: ExecutionContext =
         ExecutionContext.fromExecutor(Executors.newFixedThreadPool(serviceConfig.threads))
 
-      ConnectionHelper.generateTransactor(postgresConfig)(contextShift, executionContext)
+      ConnectionBuilder.generateTransactor(postgresConfig)(contextShift, executionContext)
 
       val router = Router(
         "" -> (new HealthRoutes).routes,
