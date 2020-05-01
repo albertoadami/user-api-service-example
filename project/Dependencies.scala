@@ -17,8 +17,7 @@ object Dependencies {
 
   lazy val circeDependencies = Seq(
     "io.circe" %% "circe-config" % "0.7.0",
-    "io.circe"   %% "circe-generic" % "0.13.0",
-    "io.circe" %% "circe-literal" % "0.13.0"
+    "io.circe"   %% "circe-generic" % "0.13.0"
   )
 
   val doobieVersion = "0.8.8"

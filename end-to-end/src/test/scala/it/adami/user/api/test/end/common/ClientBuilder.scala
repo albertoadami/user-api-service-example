@@ -1,4 +1,4 @@
-package it.adami.bitrock.user.api.test.end.common
+package it.adami.user.api.test.end.common
 
 import java.util.concurrent.Executors
 
