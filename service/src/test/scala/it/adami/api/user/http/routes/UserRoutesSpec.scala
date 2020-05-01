@@ -2,7 +2,6 @@ package it.adami.api.user.http.routes
 
 import cats.effect.IO
 import it.adami.api.user.services.UserService
-import it.adami.api.user.SpecBase
 import it.adami.api.user.data.UserDataGenerator
 import org.http4s.Request
 import org.http4s.circe._
@@ -10,6 +9,7 @@ import org.http4s.dsl.io._
 import org.http4s.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
+import it.adami.api.user.SpecBase
 import it.adami.api.user.errors.UserNameAlreadyInUse
 import org.mockito.MockitoSugar
 

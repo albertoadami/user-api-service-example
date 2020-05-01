@@ -16,7 +16,8 @@ object UserRepository {
 final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
   override def insertUser(user: User): IO[Int] =
-    sql"INSERT INTO users(name, surname, email) VALUES(${user.name}, ${user.surname}, ${user.email})".update.run
+    sql"INSERT INTO users(name, surname, email) VALUES(${user.name}, ${user.surname}, ${user.email})".update
+      .withUniqueGeneratedKeys[Int]("id")
       .transact(xa)
 
 }

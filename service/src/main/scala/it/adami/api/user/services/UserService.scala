@@ -1,13 +1,16 @@
 package it.adami.api.user.services
 
 import cats.effect.IO
-import it.adami.api.user.errors.CreateUserError
+import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
+import it.adami.api.user.errors.{CreateUserError, UserNameAlreadyInUse}
 import it.adami.api.user.http.json.CreateUserRequest
 import it.adami.api.user.repository.UserRepository
+import it.adami.api.user.converters.UserConverters._
 
-class UserService(userRepository: UserRepository) {
+class UserService(userRepository: UserRepository) extends LazyLogging {
 
   def createUser(createUserRequest: CreateUserRequest): IO[Either[CreateUserError, String]] =
-    IO.pure(Right("my-id"))
+    userRepository.insertUser(createUserRequest).map { id => Right(id.toString) }
 
 }
