@@ -9,6 +9,10 @@ trait UserRepository {
   def insertUser(user: User): IO[Int]
 }
 
+object UserRepository {
+  def apply(xa: Transactor[IO]): UserRepository = new DoobieUserRepository(xa)
+}
+
 final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
   override def insertUser(user: User): IO[Int] =
