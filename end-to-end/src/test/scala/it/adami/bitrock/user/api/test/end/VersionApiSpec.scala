@@ -1,8 +1,10 @@
 package it.adami.bitrock.user.api.test.end
 
-import cats.effect.IO
+import buildinfo.BuildInfo
 import com.dimafeng.testcontainers.ForAllTestContainer
-import org.http4s.{Request, Status, Uri}
+import io.circe.Json
+import org.http4s.Uri
+import org.http4s.circe._
 
 class VersionApiSpec extends SpecBase with ForAllTestContainer {
 
@@ -10,10 +12,16 @@ class VersionApiSpec extends SpecBase with ForAllTestContainer {
     "GET /api/0.1/version is called" should {
       "return Ok with the version information" in {
         client
-          .status(req = Request[IO](uri = Uri.unsafeFromString(versionApiPath)))
-          .map(_ shouldBe Status.Ok)
-          .unsafeToFuture
+          .expect[Json](uri = Uri.unsafeFromString(versionApiPath))
+          .map { json =>
+            val hcursor = json.hcursor
 
+            hcursor.get[String]("version").right.get shouldBe BuildInfo.version
+            hcursor.get[String]("name").right.get shouldBe "user-api"
+            hcursor.get[String]("sbtVersion").right.get shouldBe BuildInfo.sbtVersion
+            hcursor.get[String]("scalaVersion").right.get shouldBe BuildInfo.scalaVersion
+          }
+          .unsafeToFuture
       }
     }
   }

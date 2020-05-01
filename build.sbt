@@ -1,6 +1,4 @@
 import Dependencies._
-import CoverageSettings._
-import DockerSettings._
 
 val commonSettings = Seq(
   organization := "it.adami",
@@ -12,7 +10,7 @@ val commonSettings = Seq(
 )
 
 val buildInfoSettings = Seq(
-  buildInfoOptions += BuildInfoOption.ToJson
+  buildInfoOptions += BuildInfoOption.ToMap
 )
 
 
