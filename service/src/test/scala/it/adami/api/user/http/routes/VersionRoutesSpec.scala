@@ -5,7 +5,6 @@ import it.adami.api.user.SpecBase
 import it.adami.api.user.services.VersionService
 import org.http4s.{Request, Status}
 import org.mockito.MockitoSugar
-import io.circe.literal._
 import org.http4s.circe._
 import org.http4s.implicits._
 
