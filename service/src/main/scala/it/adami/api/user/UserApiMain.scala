@@ -34,7 +34,7 @@ object UserApiMain extends IOApp with LazyLogging {
 
     AppConfig.load flatMap { config =>
       val serviceConfig = config.service
-      val postgresConfig = config.postgresConfig
+      val postgresConfig = config.postgres
 
       implicit val executionContext: ExecutionContext =
         ExecutionContext.fromExecutor(Executors.newFixedThreadPool(serviceConfig.threads))
