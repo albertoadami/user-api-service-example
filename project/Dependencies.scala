@@ -28,7 +28,8 @@ object Dependencies {
 
   lazy val testDependencies = Seq(
     "org.scalatest" %% "scalatest" % "3.1.1" % Test,
-    "org.mockito" %% "mockito-scala" % "1.14.0" % Test
+    "org.mockito" %% "mockito-scala" % "1.14.0" % Test,
+    "io.circe" %% "circe-literal" % "0.13.0" % Test
   )
 
 }

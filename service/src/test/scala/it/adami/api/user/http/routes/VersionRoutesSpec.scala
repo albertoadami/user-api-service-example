@@ -6,6 +6,7 @@ import it.adami.api.user.services.VersionService
 import org.http4s.{Request, Status}
 import org.mockito.MockitoSugar
 import org.http4s.circe._
+import io.circe.literal._
 import org.http4s.implicits._
 
 class VersionRoutesSpec extends SpecBase with MockitoSugar {
