@@ -6,23 +6,21 @@ import it.adami.api.user.services.VersionService
 import org.http4s.{Request, Status}
 import org.mockito.MockitoSugar
 import org.http4s.circe._
-import io.circe.literal._
 import org.http4s.implicits._
 
 class VersionRoutesSpec extends SpecBase with MockitoSugar {
 
   private val mockVersionResponse =
-    """
-      |{
-      | "name": "user-api",
-      | "version": "some-version",
-      | "scalaVersion": "scalaVersion",
-      | "sbtVersion": "my-sbt-version"
-      |}
-      |""".stripMargin
+    Json.obj(
+      "name" -> Json.fromString("user-api"),
+      "version" -> Json.fromString("some-version"),
+      "scalaVersion" -> Json.fromString("scalaVersion"),
+      "sbtVersion" -> Json.fromString("my-sbt-version")
+    )
+
 
   private val versionService = mock[VersionService]
-  when(versionService.version).thenReturn(json"$mockVersionResponse")
+  when(versionService.version).thenReturn(mockVersionResponse)
   private val versionRoutes = new VersionRoutes(versionService).routes.orNotFound
 
   "VersionRoutes" should {
