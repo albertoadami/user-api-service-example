@@ -10,7 +10,7 @@ import it.adami.api.user.config.AppConfig
 import it.adami.api.user.services.{UserService, VersionService}
 import cats.effect.IO
 import it.adami.api.user.http.RoutesBuilder
-import it.adami.api.user.repository.{ConnectionBuilder, UserRepository}
+import it.adami.api.user.repository.{DatabaseManager, UserRepository}
 
 import scala.concurrent.ExecutionContext
 
@@ -27,21 +27,21 @@ object UserApiMain extends IOApp with LazyLogging {
       implicit val executionContext: ExecutionContext =
         ExecutionContext.fromExecutor(Executors.newFixedThreadPool(serviceConfig.threads))
 
-      ConnectionBuilder.generateTransactor(postgresConfig)(contextShift, executionContext).use {
-        xa =>
-          val userRepository = UserRepository(xa)
+      DatabaseManager.generateTransactor(postgresConfig)(contextShift, executionContext).use { xa =>
+        val userRepository = UserRepository(xa)
 
-          val userService = new UserService(userRepository)
-          val versionService = new VersionService
+        val userService = new UserService(userRepository)
+        val versionService = new VersionService
 
-          val routes = Seq(
-            new VersionRoutes(versionService),
-            new UserRoutes(userService)
-          )
+        val routes = Seq(
+          new VersionRoutes(versionService),
+          new UserRoutes(userService)
+        )
 
-          val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
-          val httpApp = routesBuilder.buildApp
+        val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
+        val httpApp = routesBuilder.buildApp
 
+        DatabaseManager.initialize(xa).flatMap { _ =>
           BlazeServerBuilder[IO](executionContext)
             .withExecutionContext(executionContext)
             .bindHttp(serviceConfig.port, serviceConfig.host)
@@ -49,6 +49,7 @@ object UserApiMain extends IOApp with LazyLogging {
             .resource
             .use(_ => IO.never)
             .as(ExitCode.Success)
+        }
 
       }
 

@@ -3,10 +3,11 @@ package it.adami.api.user.repository
 import cats.effect.{Blocker, ContextShift, IO, Resource}
 import doobie.hikari.HikariTransactor
 import it.adami.api.user.config.PostgresConfig
+import org.flywaydb.core.Flyway
 
 import scala.concurrent.ExecutionContext
 
-object ConnectionBuilder {
+object DatabaseManager {
 
   private val PostgresDriver = "org.postgresql.Driver"
 
@@ -26,5 +27,15 @@ object ConnectionBuilder {
       )
     } yield xa
 
+  }
+
+  def initialize(transactor: HikariTransactor[IO]): IO[Unit] = {
+    transactor.configure { dataSource =>
+      IO {
+        val flyWay = Flyway.configure().dataSource(dataSource).load()
+        flyWay.migrate()
+        ()
+      }
+    }
   }
 }

@@ -21,14 +21,16 @@ object Dependencies {
   )
 
   val doobieVersion = "0.8.8"
-  val doobieDependencies = Seq(
+  val databaseDependencies = Seq(
     "org.tpolecat" %% "doobie-core"      % doobieVersion,
     "org.tpolecat" %% "doobie-postgres"  % doobieVersion,
-    "org.tpolecat"          %% "doobie-hikari"          % doobieVersion
+    "org.tpolecat"          %% "doobie-hikari"          % doobieVersion,
+    "org.flywaydb"          %  "flyway-core"          % "6.3.1"
   )
 
   lazy val endToEndDependencies = Seq(
     "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % Test,
+    "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.36.1" % Test,
     "org.http4s" %% "http4s-blaze-client" % http4sVersion % Test,
     "org.scalatest" %% "scalatest" % "3.1.1" % Test
   )
