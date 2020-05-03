@@ -6,9 +6,7 @@ val commonSettings = Seq(
   unusedCompileDependenciesFilter -=
     moduleFilter("org.slf4j", "log4j-over-slf4j") ,
   unusedCompileDependenciesFilter -=
-    moduleFilter("ch.qos.logback", "logback-classic"),
-  unusedCompileDependenciesFilter -=
-    moduleFilter("org.tpolecat", "doobie-postgres")
+    moduleFilter("ch.qos.logback", "logback-classic")
 )
 
 val buildInfoSettings = Seq(

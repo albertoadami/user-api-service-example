@@ -23,7 +23,6 @@ object Dependencies {
   val doobieVersion = "0.8.8"
   val databaseDependencies = Seq(
     "org.tpolecat" %% "doobie-core"      % doobieVersion,
-    "org.tpolecat" %% "doobie-postgres"  % doobieVersion,
     "org.tpolecat"          %% "doobie-hikari"          % doobieVersion,
     "org.flywaydb"          %  "flyway-core"          % "6.3.1"
   )
