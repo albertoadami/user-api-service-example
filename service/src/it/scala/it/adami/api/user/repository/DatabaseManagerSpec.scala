@@ -11,7 +11,7 @@ class DatabaseManagerSpec extends DatabaseSpec with ForAllTestContainer {
   "DatabaseManager" should {
     "create a Hikari transactor from configuration" in {
 
-      val simpleQuery = sql"select 42".query[Int].unique
+      val simpleQuery = sql"select 42".query[Int].unique//some simple query to check if database is up
 
       simpleQuery.transact(transactor)
         .map(_ shouldBe 42)

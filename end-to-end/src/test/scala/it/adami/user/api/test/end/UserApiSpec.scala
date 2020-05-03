@@ -1,14 +1,13 @@
 package it.adami.user.api.test.end
 
 import cats.effect.IO
-import com.dimafeng.testcontainers.ForAllTestContainer
 import io.circe.Json
 import it.adami.user.api.test.end.common.JsonBuilder
 import org.http4s.{Request, Uri}
 import org.http4s.dsl.io.POST
 import org.http4s.circe._
 
-class UserApiSpec extends SpecBase with ForAllTestContainer {
+class UserApiSpec extends SpecBase {
 
   "UserApi" when {
     "POST /api/0.1/users is called" should {

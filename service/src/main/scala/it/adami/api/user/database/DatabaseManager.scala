@@ -1,4 +1,4 @@
-package it.adami.api.user.repository
+package it.adami.api.user.database
 
 import cats.effect.{Blocker, ContextShift, IO, Resource}
 import doobie.hikari.HikariTransactor

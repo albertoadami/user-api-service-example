@@ -9,8 +9,9 @@ import com.typesafe.scalalogging.LazyLogging
 import it.adami.api.user.config.AppConfig
 import it.adami.api.user.services.{UserService, VersionService}
 import cats.effect.IO
+import it.adami.api.user.database.DatabaseManager
 import it.adami.api.user.http.RoutesBuilder
-import it.adami.api.user.repository.{DatabaseManager, UserRepository}
+import it.adami.api.user.repository.UserRepository
 
 import scala.concurrent.ExecutionContext
 
