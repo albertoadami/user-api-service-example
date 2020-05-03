@@ -7,7 +7,7 @@ import doobie.implicits._
 
 trait UserRepository {
   def createSchema: IO[Int]
-  def insertUser(user: User): IO[Int]
+  def insertUser(user: User): IO[Option[Int]]
 }
 
 object UserRepository {
@@ -22,17 +22,44 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
     CREATE TABLE users (
       id   SERIAL PRIMARY KEY,
       firstname VARCHAR NOT NULL,
-      surname VARCHAR NOT NULL,
-      email  VARCHAR NOT NULL UNIQUE
+      lastname VARCHAR NOT NULL,
+      email  VARCHAR NOT NULL UNIQUE,
+      password VARCHAR NOT NULL,
+      birthday_date  VARCHAR NOT NULL,
+      gender VARCHAR NOT NULL,
+      creation_date VARCHAR NOT NULL,
+      enabled boolean NOT NULL
     )
   """.update.run
     createTable.transact(xa)
   }
 
-  override def insertUser(user: User): IO[Int] = {
-    sql"INSERT INTO users(firstname, surname, email) VALUES(${user.name}, ${user.surname}, ${user.email})".update
-      .withUniqueGeneratedKeys[Int]("id")
-      .transact(xa)
+  override def insertUser(user: User): IO[Option[Int]] = {
+    val insertQuery =
+      sql"""
+           INSERT INTO users(firstname, lastname, email, password, birthday_date, gender, creation_date, enabled)
+           VALUES(${user.firstname}, ${user.surname}, ${user.email}, ${user.password}, ${user.dateOfBirth}, ${user.gender}, ${user.creationDate}, ${user.enabled})
+           """.update
+        .withUniqueGeneratedKeys[Int]("id")
+        .transact(xa)
+
+    val checkIfExist =
+      sql"""SELECT email
+            FROM users u
+            WHERE u.email = ${user.email}
+         """.stripMargin
+        .query[User]
+        .option
+        .transact(xa)
+
+    for {
+      exist <- checkIfExist
+      result <- exist match {
+        case Some(_) => IO { None }
+        case None    => insertQuery.map(Some(_))
+      }
+    } yield result
+
   }
 
 }

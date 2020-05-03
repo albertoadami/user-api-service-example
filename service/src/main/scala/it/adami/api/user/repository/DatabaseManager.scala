@@ -29,7 +29,7 @@ object DatabaseManager {
 
   }
 
-  def initialize(transactor: HikariTransactor[IO]): IO[Unit] = {
+  def migrateSchema(transactor: HikariTransactor[IO]): IO[Unit] = {
     transactor.configure { dataSource =>
       IO {
         val flyWay = Flyway.configure().dataSource(dataSource).load()

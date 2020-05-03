@@ -12,9 +12,10 @@ import scala.util.Random
 class UserServiceSpec extends SpecBase with EitherValues {
 
   private val userRepository = new UserRepository {
-    override def insertUser(user: User): IO[Int] = IO.pure(1)
+    override def insertUser(user: User): IO[Option[Int]] = IO.pure(Some(1))
 
     override def createSchema: IO[Int] = IO.pure(Random.nextInt(1))
+
   }
 
   "UserService" when {

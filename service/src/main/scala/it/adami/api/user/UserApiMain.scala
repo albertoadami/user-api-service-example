@@ -41,7 +41,8 @@ object UserApiMain extends IOApp with LazyLogging {
         val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
         val httpApp = routesBuilder.buildApp
 
-        DatabaseManager.initialize(xa).flatMap { _ =>
+        //migrate the database schema using flyway
+        DatabaseManager.migrateSchema(xa).flatMap { _ =>
           BlazeServerBuilder[IO](executionContext)
             .withExecutionContext(executionContext)
             .bindHttp(serviceConfig.port, serviceConfig.host)
