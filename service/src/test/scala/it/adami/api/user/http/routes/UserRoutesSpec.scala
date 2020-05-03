@@ -41,6 +41,15 @@ class UserRoutesSpec extends SpecBase with MockitoSugar {
 
     }
 
+    "return BadRequest if the json request is invalid" in {
+      val invalidReq = UserDataGenerator.generateCreateUserRequest.copy(gender = "invalid-gender")
+      val response = userRoutes
+        .run(Request(method = POST, uri = uri"/users").withEntity(invalidReq.asJson))
+        .unsafeRunSync()
+
+      response.status shouldBe BadRequest
+    }
+
   }
 
 }

@@ -21,8 +21,10 @@ trait UserValidator {
 
   def validateLastName(lastName: String): ValidationResult[String] =
     if (checkIfStringIsEmpty(lastName)) IsEmpty("lastname").invalidNec else lastName.validNec
-  def validateBirthDate(birthDate: String): ValidationResult[String] =
+
+  def validateBirthDate(birthDate: String): ValidationResult[String] = {
     if (checkIfStringIsEmpty(birthDate)) IsEmpty("dateOfBirth").invalidNec else birthDate.validNec
+  }
 
   def validateGender(gender: String): ValidationResult[String] = {
     val genderUp = gender.toUpperCase

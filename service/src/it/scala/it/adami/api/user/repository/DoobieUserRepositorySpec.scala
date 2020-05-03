@@ -1,5 +1,8 @@
 package it.adami.api.user.repository
 
+import java.sql.Timestamp
+import java.time.LocalDateTime
+
 import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
 import it.adami.api.user.DatabaseSpec
 import it.adami.api.user.domain.User
@@ -16,7 +19,7 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
     Random.nextString(5),
     Random.nextString(5),
     Random.nextString(5),
-    Random.nextString(5),
+    Timestamp.valueOf(LocalDateTime.now()),
     false
   )
 
@@ -26,10 +29,8 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
     "create the users table schema" in {
 
       val userRepository = UserRepository(transactor)
+      DatabaseManager.migrateSchema(transactor).map(_ => 1 shouldBe 1).unsafeToFuture()
 
-      userRepository.createSchema
-          .map(_ shouldBe 0)
-          .unsafeToFuture
     }
 
     "insert a user into the users table" in {

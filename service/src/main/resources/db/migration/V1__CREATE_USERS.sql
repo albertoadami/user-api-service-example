@@ -6,6 +6,6 @@ CREATE TABLE users(
   password VARCHAR NOT NULL,
   birthday_date  VARCHAR NOT NULL,
   gender VARCHAR NOT NULL,
-  creation_date VARCHAR NOT NULL,
+  creation_date TIMESTAMP NOT NULL,
   enabled boolean NOT NULL
 );

@@ -1,5 +1,7 @@
 package it.adami.api.user.domain
 
+import java.sql.Timestamp
+
 final case class User(
     firstname: String,
     surname: String,
@@ -7,6 +9,6 @@ final case class User(
     password: String,
     dateOfBirth: String,
     gender: String,
-    creationDate: String,
+    creationDate: Timestamp,
     enabled: Boolean
 )
