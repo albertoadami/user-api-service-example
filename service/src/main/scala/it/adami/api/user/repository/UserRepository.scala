@@ -44,7 +44,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
         .transact(xa)
 
     val checkIfExist =
-      sql"""SELECT email
+      sql"""SELECT firstname, lastname, email, password, birthday_date, gender, creation_date, enabled
             FROM users u
             WHERE u.email = ${user.email}
          """.stripMargin
