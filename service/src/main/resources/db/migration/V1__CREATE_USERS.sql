@@ -4,7 +4,7 @@ CREATE TABLE users(
   lastname VARCHAR NOT NULL,
   email  VARCHAR NOT NULL UNIQUE,
   password VARCHAR NOT NULL,
-  birthday_date  VARCHAR NOT NULL,
+  birthday_date  DATE NOT NULL,
   gender VARCHAR NOT NULL,
   creation_date TIMESTAMP NOT NULL,
   enabled boolean NOT NULL

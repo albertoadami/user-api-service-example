@@ -9,11 +9,11 @@ object JsonBuilder {
   def createRequestJson: Json =
     Json.obj(
       "firstname" -> Json.fromString(Random.nextString(5)),
-      "surname" -> Json.fromString(Random.nextString(5)),
-      "email" -> Json.fromString(Random.nextString(5)),
+      "lastname" -> Json.fromString(Random.nextString(5)),
+      "email" -> Json.fromString(s"test${Random.nextInt(4)}@test.com"),
       "password" -> Json.fromString(Random.nextString(5)),
       "gender" -> Json.fromString("MALE"),
-      "dateOfBirth" -> Json.fromString(Random.nextString(5))
+      "dateOfBirth" -> Json.fromString("07-09-1993")
     )
 
 }

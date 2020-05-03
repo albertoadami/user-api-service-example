@@ -2,6 +2,7 @@ package it.adami.api.user.repository
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
+import java.util.Date
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
 import it.adami.api.user.DatabaseSpec
@@ -17,7 +18,7 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
     Random.nextString(5),
     Random.nextString(5),
     Random.nextString(5),
-    Random.nextString(5),
+    new Date(1990, 6, 8),
     Random.nextString(5),
     Timestamp.valueOf(LocalDateTime.now()),
     false

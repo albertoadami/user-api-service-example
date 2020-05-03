@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 import it.adami.api.user.domain.User
 import it.adami.api.user.http.json.CreateUserRequest
+import it.adami.api.user.util.StringUtils
 
 object UserConverters {
 
@@ -14,7 +15,7 @@ object UserConverters {
       surname = req.lastname,
       email = req.email,
       password = req.password,
-      dateOfBirth = req.dateOfBirth,
+      dateOfBirth = StringUtils.getDateFromString(req.dateOfBirth),
       creationDate = Timestamp.valueOf(LocalDateTime.now()),
       gender = req.gender,
       enabled = false

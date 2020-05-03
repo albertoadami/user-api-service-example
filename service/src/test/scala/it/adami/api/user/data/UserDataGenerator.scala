@@ -10,9 +10,9 @@ object UserDataGenerator {
     CreateUserRequest(
       firstname = Random.nextString(5),
       lastname = Random.nextString(5),
-      email = Random.nextString(5),
+      email = "test@mail.com",
       password = Random.nextString(5),
-      dateOfBirth = Random.nextString(5),
+      dateOfBirth = "07-09-1990",
       gender = "MALE"
     )
 
