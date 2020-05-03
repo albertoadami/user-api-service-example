@@ -4,8 +4,6 @@ import cats.effect.IO
 import it.adami.api.user.domain.User
 import doobie._
 import doobie.implicits._
-import doobie.postgres.implicits._
-import doobie.postgres.pgisimplicits._
 import doobie.implicits.javasql._
 
 trait UserRepository {
