@@ -28,6 +28,10 @@ object Dependencies {
     "org.flywaydb"          %  "flyway-core"          % "6.3.1"
   )
 
+  lazy val catsDependencies = Seq(
+    "org.typelevel" %% "cats-core" % "2.1.1"
+  )
+
   lazy val endToEndDependencies = Seq(
     "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % Test,
     "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.36.1" % Test,

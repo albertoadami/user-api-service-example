@@ -27,6 +27,7 @@ lazy val service = (project in file("service"))
       loggingDependencies ++
       circeDependencies ++
       databaseDependencies ++
+      catsDependencies ++
       testDependencies
   )
   .configs(IntegrationTest)

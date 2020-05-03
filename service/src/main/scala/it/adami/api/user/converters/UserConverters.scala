@@ -8,7 +8,7 @@ object UserConverters {
   implicit def convertToUser(req: CreateUserRequest): User =
     User(
       firstname = req.firstname,
-      surname = req.surname,
+      surname = req.lastname,
       email = req.email,
       password = req.password,
       dateOfBirth = req.dateOfBirth,

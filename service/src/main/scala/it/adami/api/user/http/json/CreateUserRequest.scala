@@ -7,7 +7,7 @@ import io.circe.generic.auto._
 
 case class CreateUserRequest(
     firstname: String,
-    surname: String,
+    lastname: String,
     email: String,
     password: String,
     dateOfBirth: String,
