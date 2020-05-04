@@ -3,7 +3,7 @@ package it.adami.api.user.http
 import cats.effect.{ContextShift, IO}
 import it.adami.api.user.config.ServiceConfig
 import it.adami.api.user.http.routes.{BaseRoutes, HealthRoutes}
-import org.http4s.{HttpApp, HttpRoutes}
+import org.http4s.HttpApp
 import org.http4s.server.Router
 import org.http4s.server.middleware.Logger
 import org.http4s.implicits._

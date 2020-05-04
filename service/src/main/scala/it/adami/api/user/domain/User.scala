@@ -5,7 +5,7 @@ import java.util.Date
 
 final case class User(
     firstname: String,
-    surname: String,
+    lastname: String,
     email: String,
     password: String,
     dateOfBirth: Date,
