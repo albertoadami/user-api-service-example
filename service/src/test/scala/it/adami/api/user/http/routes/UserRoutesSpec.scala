@@ -1,6 +1,7 @@
 package it.adami.api.user.http.routes
 
 import cats.effect.IO
+import io.circe.Json
 import it.adami.api.user.services.UserService
 import it.adami.api.user.data.UserDataGenerator
 import org.http4s.Request
@@ -37,7 +38,6 @@ class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with B
         response.headers.toList.find(h => h.name.toString == "Location").value.value
 
       locationHeaderValue.contains(serviceConfig.externalHost) shouldBe true
-      locationHeaderValue.contains(serviceConfig.port.toString) shouldBe true
       locationHeaderValue.contains(s"api/${serviceConfig.apiVersion}/users") shouldBe true
     }
 
@@ -70,13 +70,24 @@ class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with B
     }
 
     "return Ok with the json if the user exist" in {
+      val userGenerated = UserDataGenerator.generateUserDetailResponse
       when(userService.findUser(999))
-        .thenReturn(IO.pure(Some(UserDataGenerator.generateUserDetailResponse)))
+        .thenReturn(IO.pure(Some(userGenerated)))
       val response = userRoutes
         .run(Request(uri = uri"/users/999"))
         .unsafeRunSync()
 
-      response.status shouldBe Ok
+      val hcursor = response.as[Json].unsafeRunSync.hcursor
+      hcursor.get[String]("")
+
+      hcursor.get[String]("firsstname").map(_ shouldBe userGenerated.firstname)
+      hcursor.get[String]("lastsname").map(_ shouldBe userGenerated.lastname)
+      hcursor.get[String]("emasil").map(_ shouldBe userGenerated.email)
+      hcursor.get[String]("gender").map(_ shouldBe userGenerated.gender)
+      hcursor.get[String]("datesssssssssOfBirth").map(_ shouldBe userGenerated.dateOfBirth)
+
+      //response.status shouldBe Ok
+
     }
 
   }

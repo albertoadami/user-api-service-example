@@ -22,7 +22,7 @@ class UserRoutes(userService: UserService, serviceConfig: ServiceConfig)
     //TODO maybe is better to move the location builder in a separate class
     def generateLocationForUser(id: Int): Uri =
       Uri.unsafeFromString(
-        s"${serviceConfig.externalHost}:${serviceConfig.port}/api/${serviceConfig.apiVersion}/users/$id"
+        s"http://${serviceConfig.externalHost}/api/${serviceConfig.apiVersion}/users/$id"
       )
     userService.createUser(req).flatMap {
       case Right(id) =>

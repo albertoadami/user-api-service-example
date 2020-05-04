@@ -39,6 +39,19 @@ class UserApiSpec extends SpecBase {
     }
 
     s"GET /api/$apiVersion/users/{id} is called" should {
+      "return Ok with the JSON detail if the user exist" in {
+        val jsonBody = JsonBuilder.createRequestJson
+        val postReq: Request[IO] =
+          Request(method = POST, uri = Uri.unsafeFromString(createUserApiPath)).withEntity(jsonBody)
+        val location = client.fetch(postReq){response =>
+          val location = response.headers.toList.find(_.name.toString == "Location").get.value.replace("localhost:8080", serviceHost)
+          IO.pure(location)
+        }.unsafeRunSync()
+
+        val getReq: Request[IO] = Request(uri = Uri.unsafeFromString(location))
+        client.status(getReq).map(_.code shouldBe 200).unsafeToFuture
+
+      }
       "return NotFound if the user with the specified id doesn't exist" in {
         val unExistingId = Random.nextInt(6)
         val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(unExistingId)))
