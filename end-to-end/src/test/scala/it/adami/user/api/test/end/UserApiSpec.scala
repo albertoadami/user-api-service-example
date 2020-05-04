@@ -53,10 +53,10 @@ class UserApiSpec extends SpecBase {
 
       }
       "return NotFound if the user with the specified id doesn't exist" in {
-        val unExistingId = Random.nextInt(6)
-        val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(unExistingId)))
+        val notExistingId = 99999//id that I know doesn't exist
+        val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(notExistingId)))
 
-        client.status(req).map(_.code shouldBe 200).unsafeToFuture
+        client.status(req).map(_.code shouldBe 404).unsafeToFuture
       }
     }
 
