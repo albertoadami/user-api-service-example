@@ -14,9 +14,14 @@ import it.adami.api.user.SpecBase
 import it.adami.api.user.config.ServiceConfig
 import it.adami.api.user.errors.UserNameAlreadyInUse
 import org.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.{BeforeAndAfterEach, EitherValues, OptionValues}
 
-class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with BeforeAndAfterEach {
+class UserRoutesSpec
+    extends SpecBase
+    with MockitoSugar
+    with OptionValues
+    with EitherValues
+    with BeforeAndAfterEach {
 
   private val request = UserDataGenerator.generateCreateUserRequest
 
@@ -78,16 +83,11 @@ class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with B
         .unsafeRunSync()
 
       val hcursor = response.as[Json].unsafeRunSync.hcursor
-      hcursor.get[String]("")
-
-      hcursor.get[String]("firsstname").map(_ shouldBe userGenerated.firstname)
-      hcursor.get[String]("lastsname").map(_ shouldBe userGenerated.lastname)
-      hcursor.get[String]("emasil").map(_ shouldBe userGenerated.email)
-      hcursor.get[String]("gender").map(_ shouldBe userGenerated.gender)
-      hcursor.get[String]("datesssssssssOfBirth").map(_ shouldBe userGenerated.dateOfBirth)
-
-      //response.status shouldBe Ok
-
+      hcursor.get[String]("firstname").right.value shouldBe userGenerated.firstname
+      hcursor.get[String]("lastname").right.value shouldBe userGenerated.lastname
+      hcursor.get[String]("email").right.value shouldBe userGenerated.email
+      hcursor.get[String]("gender").right.value shouldBe userGenerated.gender
+      hcursor.get[String]("dateOfBirth").right.value shouldBe userGenerated.dateOfBirth
     }
 
   }
