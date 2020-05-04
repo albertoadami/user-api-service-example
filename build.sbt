@@ -6,7 +6,9 @@ val commonSettings = Seq(
   unusedCompileDependenciesFilter -=
     moduleFilter("org.slf4j", "log4j-over-slf4j") ,
   unusedCompileDependenciesFilter -=
-    moduleFilter("ch.qos.logback", "logback-classic")
+    moduleFilter("ch.qos.logback", "logback-classic"),
+  unusedCompileDependenciesFilter -=
+    moduleFilter("org.tpolecat", "doobie-postgres")
 )
 
 val buildInfoSettings = Seq(
@@ -19,12 +21,18 @@ lazy val service = (project in file("service"))
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
-    coverageExcludedPackages := ".*user;.*user.config",
+    coverageExcludedPackages := ".*user;.*user.config;.*user.http",
       libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++
       circeDependencies ++
+      databaseDependencies ++
+      catsDependencies ++
       testDependencies
+  )
+  .configs(IntegrationTest)
+  .settings(
+    Defaults.itSettings
   )
   .settings(commonSettings: _*)
   .settings(CoverageSettings.settings: _*)

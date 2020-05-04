@@ -21,6 +21,8 @@ jobs:
       run: sbt clean coverage compile
     - name: Test
       run: sbt test
+    - name: Integration test
+      run: sbt it:test
     - name: Check coverage
       run: sbt coverageReport
     - name: Build docker image

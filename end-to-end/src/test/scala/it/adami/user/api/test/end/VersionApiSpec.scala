@@ -1,12 +1,11 @@
-package it.adami.bitrock.user.api.test.end
+package it.adami.user.api.test.end
 
 import buildinfo.BuildInfo
-import com.dimafeng.testcontainers.ForAllTestContainer
 import io.circe.Json
 import org.http4s.Uri
 import org.http4s.circe._
 
-class VersionApiSpec extends SpecBase with ForAllTestContainer {
+class VersionApiSpec extends SpecBase {
 
   "VersionApi" when {
     "GET /api/0.1/version is called" should {

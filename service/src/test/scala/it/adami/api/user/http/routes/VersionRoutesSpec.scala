@@ -1,10 +1,10 @@
 package it.adami.api.user.http.routes
 
 import io.circe.Json
-import it.adami.api.user.SpecBase
 import it.adami.api.user.services.VersionService
 import org.http4s.{Request, Status}
 import org.mockito.MockitoSugar
+import it.adami.api.user.SpecBase
 import org.http4s.circe._
 import org.http4s.implicits._
 
