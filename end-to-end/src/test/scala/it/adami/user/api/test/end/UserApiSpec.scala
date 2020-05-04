@@ -56,7 +56,7 @@ class UserApiSpec extends SpecBase {
         val unExistingId = Random.nextInt(6)
         val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(unExistingId)))
 
-        client.status(req).map(_.code shouldBe 404).unsafeToFuture
+        client.status(req).map(_.code shouldBe 200).unsafeToFuture
       }
     }
 
