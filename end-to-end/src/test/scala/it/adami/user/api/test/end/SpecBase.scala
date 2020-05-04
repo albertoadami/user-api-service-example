@@ -8,7 +8,11 @@ import org.http4s.client.Client
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpecLike
 
-trait SpecBase extends AsyncWordSpecLike with Matchers with UserApiContainer with ForAllTestContainer {
+trait SpecBase
+    extends AsyncWordSpecLike
+    with Matchers
+    with UserApiContainer
+    with ForAllTestContainer {
 
   override val container: MultipleContainers =
     MultipleContainers(LazyContainer(postgresContainer), LazyContainer(userApiContainer))

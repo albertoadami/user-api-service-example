@@ -7,10 +7,12 @@ import org.http4s.{Request, Uri}
 import org.http4s.dsl.io.POST
 import org.http4s.circe._
 
+import scala.util.Random
+
 class UserApiSpec extends SpecBase {
 
   "UserApi" when {
-    "POST /api/0.1/users is called" should {
+    s"POST /api/$apiVersion/users is called" should {
       "return Created for a valid json request" in {
         val jsonBody = JsonBuilder.createRequestJson
         val req: Request[IO] =
@@ -35,6 +37,16 @@ class UserApiSpec extends SpecBase {
 
       }
     }
+
+    s"GET /api/$apiVersion/users/{id} is called" should {
+      "return NotFound if the user with the specified id doesn't exist" in {
+        val unExistingId = Random.nextInt(6)
+        val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(unExistingId)))
+
+        client.status(req).map(_.code shouldBe 404).unsafeToFuture
+      }
+    }
+
   }
 
 }

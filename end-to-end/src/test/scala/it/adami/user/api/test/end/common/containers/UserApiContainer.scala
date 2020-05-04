@@ -19,11 +19,14 @@ trait UserApiContainer extends PostgresContainer {
     )
   )
 
+  protected val apiVersion = "0.1"
+
   lazy val serviceHost =
     s"${userApiContainer.containerIpAddress}:${userApiContainer.mappedPort(ExposedPort)}"
-  lazy val basePath = s"http://$serviceHost/api/0.1"
+  lazy val basePath = s"http://$serviceHost/api/$apiVersion"
 
   lazy val versionApiPath: String = s"$basePath/version"
   lazy val createUserApiPath: String = s"$basePath/users"
+  def getUserApiPath(userId: Int): String = s"$basePath/users/$userId"
 
 }
