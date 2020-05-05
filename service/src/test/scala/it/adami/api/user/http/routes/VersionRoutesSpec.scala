@@ -7,8 +7,9 @@ import org.mockito.MockitoSugar
 import it.adami.api.user.SpecBase
 import org.http4s.circe._
 import org.http4s.implicits._
+import org.scalatest.EitherValues
 
-class VersionRoutesSpec extends SpecBase with MockitoSugar {
+class VersionRoutesSpec extends SpecBase with MockitoSugar with EitherValues {
 
   private val mockVersionResponse =
     Json.obj(
@@ -27,15 +28,13 @@ class VersionRoutesSpec extends SpecBase with MockitoSugar {
       val response = versionRoutes.run(Request(uri = uri"/version")).unsafeRunSync()
 
       response.status shouldBe Status.Ok
-      response.as[Json] map { json =>
-        val hcursor = json.hcursor
+      val hcursor = response.as[Json].unsafeRunSync().hcursor
 
-        hcursor.get[String]("name").map(_ shouldBe "user-api")
-        hcursor.get[String]("version").map(_ shouldBe "some-version")
-        hcursor.get[String]("scalaVersion").map(_ shouldBe "scalaVersion")
-        hcursor.get[String]("sbtVersion").map(_ shouldBe "my-sbt-version")
+      hcursor.get[String]("name").right.value shouldBe "user-api"
+      hcursor.get[String]("version").right.value shouldBe "some-version"
+      hcursor.get[String]("scalaVersion").right.value shouldBe "scalaVersion"
+      hcursor.get[String]("sbtVersion").right.value shouldBe "my-sbt-version"
 
-      }
     }
   }
 

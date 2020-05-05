@@ -53,7 +53,21 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
       userRepository.insertUser(generateUser.copy(email = user.email)).map(_.isEmpty shouldBe true).unsafeToFuture()
     }
 
+    "return None when findUser() with a non existing id is called" in {
+      val userRepository = createRepository
+      createRepository
+        .findUser(9999999).map(_.isEmpty shouldBe true)
+        .unsafeToFuture()
+    }
 
+    "return the user when findUser() with an existing id is called" in {
+      val userRepository = createRepository
+      val userToInsert = generateUser
+      val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+
+      userRepository.findUser(id).map(result => result.value shouldBe userToInsert).unsafeToFuture
+
+    }
 
   }
 

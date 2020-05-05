@@ -7,10 +7,12 @@ import org.http4s.{Request, Uri}
 import org.http4s.dsl.io.POST
 import org.http4s.circe._
 
+import scala.util.Random
+
 class UserApiSpec extends SpecBase {
 
   "UserApi" when {
-    "POST /api/0.1/users is called" should {
+    s"POST /api/$apiVersion/users is called" should {
       "return Created for a valid json request" in {
         val jsonBody = JsonBuilder.createRequestJson
         val req: Request[IO] =
@@ -35,6 +37,29 @@ class UserApiSpec extends SpecBase {
 
       }
     }
+
+    s"GET /api/$apiVersion/users/{id} is called" should {
+      "return Ok with the JSON detail if the user exist" in {
+        val jsonBody = JsonBuilder.createRequestJson
+        val postReq: Request[IO] =
+          Request(method = POST, uri = Uri.unsafeFromString(createUserApiPath)).withEntity(jsonBody)
+        val location = client.fetch(postReq){response =>
+          val location = response.headers.toList.find(_.name.toString == "Location").get.value.replace("localhost:8080", serviceHost)
+          IO.pure(location)
+        }.unsafeRunSync()
+
+        val getReq: Request[IO] = Request(uri = Uri.unsafeFromString(location))
+        client.status(getReq).map(_.code shouldBe 200).unsafeToFuture
+
+      }
+      "return NotFound if the user with the specified id doesn't exist" in {
+        val notExistingId = 99999//id that I know doesn't exist
+        val req: Request[IO] = Request(uri = Uri.unsafeFromString(getUserApiPath(notExistingId)))
+
+        client.status(req).map(_.code shouldBe 404).unsafeToFuture
+      }
+    }
+
   }
 
 }
