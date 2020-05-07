@@ -2,7 +2,7 @@ package it.adami.api.user.services
 
 import cats.effect.IO
 import com.typesafe.scalalogging.LazyLogging
-import it.adami.api.user.errors.{CreateUserError, UserNameAlreadyInUse}
+import it.adami.api.user.errors.{CreateUserError, GenericError, UserNameAlreadyInUse, UserNotFound}
 import it.adami.api.user.http.json.{CreateUserRequest, UserDetailResponse}
 import it.adami.api.user.repository.UserRepository
 import it.adami.api.user.converters.UserConverters._
@@ -23,5 +23,13 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
 
   def findUser(id: Int): IO[Option[UserDetailResponse]] =
     userRepository.findUser(id).map { result => result.map(convertToUserDetail) }
+
+  def deleteUser(id: Int): IO[Either[GenericError, Unit]] =
+    userRepository.deleteUser(id) map { value =>
+      if (value == 0) {
+        logger.info(s"Not found user with id $id")
+        Left(UserNotFound)
+      } else Right(())
+    }
 
 }

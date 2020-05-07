@@ -69,6 +69,21 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
 
     }
 
+    "return 1 if the deleteUser() is called with an existing id" in {
+      val userRepository = createRepository
+      val userToInsert = generateUser
+      val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+
+      userRepository.deleteUser(id).map(result => result shouldBe 1).unsafeToFuture
+
+    }
+
+    "return 0 if the deleteUser() is called with an unexisting id" in {
+      val userRepository = createRepository
+      userRepository.deleteUser(999).map(result => result shouldBe 0).unsafeToFuture
+
+    }
+
   }
 
   private def createRepository: UserRepository = UserRepository(transactor)

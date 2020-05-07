@@ -47,6 +47,11 @@ class UserRoutes(userService: UserService, serviceConfig: ServiceConfig)
         result <- userService.findUser(userId)
         response <- result.fold(NotFound())(value => Ok(value))
       } yield response
+    case DELETE -> Root / "users" / IntVar(userId) =>
+      for {
+        result <- userService.deleteUser(userId)
+        response <- result.fold(_ => NotFound(), _ => NoContent())
+      } yield response
 
   }
 

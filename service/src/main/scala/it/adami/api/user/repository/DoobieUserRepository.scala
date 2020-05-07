@@ -47,4 +47,11 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
       .transact(xa)
   }
 
+  override def deleteUser(id: Int): IO[Int] =
+    sql"""
+         DELETE FROM users
+         WHERE id = $id
+        """.stripMargin.update.run
+      .transact(xa)
+
 }

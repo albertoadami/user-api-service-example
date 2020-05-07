@@ -90,6 +90,7 @@ class UserRoutesSpec
       hcursor.get[String]("dateOfBirth").right.value shouldBe userGenerated.dateOfBirth
     }
 
+    "return NoContent with a delete user with invalid id request" in {}
   }
 
 }
