@@ -65,4 +65,15 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
         """.stripMargin.update.run
       .transact(xa)
       .map(_ => ())
+
+  override def findUserByEmail(email: String): IO[Option[User]] =
+    sql"""
+          SELECT firstname, lastname, email, password, birthday_date, gender, creation_date, enabled
+          FROM users u
+          WHERE u.email = $email
+       """
+      .query[User]
+      .option
+      .transact(xa)
+
 }

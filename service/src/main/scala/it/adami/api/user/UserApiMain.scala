@@ -11,6 +11,7 @@ import it.adami.api.user.services.{UserService, VersionService}
 import cats.effect.IO
 import it.adami.api.user.database.DatabaseManager
 import it.adami.api.user.http.RoutesBuilder
+import it.adami.api.user.http.authentication.Authentication
 import it.adami.api.user.repository.UserRepository
 
 import scala.concurrent.ExecutionContext
@@ -31,12 +32,14 @@ object UserApiMain extends IOApp with LazyLogging {
       DatabaseManager.generateTransactor(postgresConfig)(contextShift, executionContext).use { xa =>
         val userRepository = UserRepository(xa)
 
+        val authentication = new Authentication(userRepository)
+
         val userService = new UserService(userRepository)
         val versionService = new VersionService
 
         val routes = Seq(
           new VersionRoutes(versionService),
-          new UserRoutes(userService, serviceConfig)
+          new UserRoutes(userService, serviceConfig, authentication.middleware)
         )
 
         val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
