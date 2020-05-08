@@ -4,7 +4,7 @@ import cats.effect.IO
 import it.adami.api.user.SpecBase
 import it.adami.api.user.data.UserDataGenerator
 import it.adami.api.user.domain.User
-import it.adami.api.user.errors.UserNameAlreadyInUse
+import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
 import it.adami.api.user.repository.UserRepository
 import org.scalatest.EitherValues
 
@@ -14,12 +14,16 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def insertUser(user: User): IO[Option[Int]] = IO.pure(Some(1))
 
     override def findUser(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
+
+    override def deleteUser(id: Int): IO[Int] = IO.pure(1)
   }
 
   private val errorUserRepository = new UserRepository {
     override def insertUser(user: User): IO[Option[Int]] = IO.pure(None)
 
     override def findUser(id: Int): IO[Option[User]] = IO.pure(None)
+
+    override def deleteUser(id: Int): IO[Int] = IO.pure(0)
   }
 
   val userService = new UserService(userRepository)
@@ -56,6 +60,21 @@ class UserServiceSpec extends SpecBase with EitherValues {
         errorUserService
           .findUser(9999)
           .map(_.isEmpty shouldBe true)
+          .unsafeToFuture
+      }
+    }
+
+    "deleteUser() is called" should {
+      "return unit if the id exists" in {
+        userService
+          .deleteUser(999)
+          .map(_.isRight shouldBe true)
+          .unsafeToFuture
+      }
+      "return UserNotFound if the id doesn't exist" in {
+        errorUserService
+          .deleteUser(999)
+          .map(value => value.left.value shouldBe UserNotFound)
           .unsafeToFuture
       }
     }

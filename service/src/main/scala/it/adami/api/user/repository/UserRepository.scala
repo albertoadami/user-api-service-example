@@ -7,6 +7,7 @@ import doobie._
 trait UserRepository {
   def insertUser(user: User): IO[Option[Int]]
   def findUser(id: Int): IO[Option[User]]
+  def deleteUser(id: Int): IO[Int]
 }
 
 object UserRepository {

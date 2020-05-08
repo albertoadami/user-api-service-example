@@ -14,8 +14,6 @@ import scala.util.Random
 
 class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer with OptionValues {
 
-  override def withFixture(test: NoArgAsyncTest): FutureOutcome = super.withFixture(test)
-
   private def generateUser = User(
     Random.nextString(5),
     Random.nextString(5),
@@ -24,7 +22,7 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
     new Date(1990, 6, 8),
     s"${Random.nextString(5)}@test.com",
     Timestamp.valueOf(LocalDateTime.now()),
-    false
+    enabled = false
   )
 
   override lazy val container: PostgreSQLContainer = postgres
@@ -33,40 +31,61 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
     DatabaseManager.migrateSchema(transactor).unsafeRunSync()//create the table schema
   }
 
-  "DoobieUserRepository" should {
+  "DoobieUserRepository" when {
 
-    "insert a user into the users table if the email is not in use" in {
-      val userRepository = createRepository
+    "insertUser(user) is called" should {
+      "return the id of the inserted user if it's a new user" in {
+        val userRepository = createRepository
 
-      userRepository
-        .insertUser(generateUser)
+        userRepository
+          .insertUser(generateUser)
           .map(value => value.isDefined shouldBe true)
           .unsafeRunSync()
 
+      }
+
+      "return None if the email is already in use" in {
+        val userRepository = createRepository
+        val user = generateUser
+
+        userRepository.insertUser(user).unsafeRunSync() // insert the first user
+        userRepository.insertUser(generateUser.copy(email = user.email)).map(_.isEmpty shouldBe true).unsafeToFuture()
+      }
     }
 
-    "not insert a user into the user table if the email is already in use" in {
-      val userRepository = createRepository
-      val user = generateUser
+    "findUser(id) is called" should {
+      "return None if the id doesn't exist" in {
+        val userRepository = createRepository
+        createRepository
+          .findUser(9999999).map(_.isEmpty shouldBe true)
+          .unsafeToFuture()
 
-      userRepository.insertUser(user).unsafeRunSync() // insert the first user
-      userRepository.insertUser(generateUser.copy(email = user.email)).map(_.isEmpty shouldBe true).unsafeToFuture()
+      }
+
+      "return the user if the id exist" in {
+        val userRepository = createRepository
+        val userToInsert = generateUser
+        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+
+        userRepository.findUser(id).map(result => result.value shouldBe userToInsert).unsafeToFuture
+
+      }
+
     }
 
-    "return None when findUser() with a non existing id is called" in {
-      val userRepository = createRepository
-      createRepository
-        .findUser(9999999).map(_.isEmpty shouldBe true)
-        .unsafeToFuture()
-    }
+    "deleteUser(id) is called" should {
+      "return 1 if the id exist" in {
+        val userRepository = createRepository
+        val userToInsert = generateUser
+        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
 
-    "return the user when findUser() with an existing id is called" in {
-      val userRepository = createRepository
-      val userToInsert = generateUser
-      val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+        userRepository.deleteUser(id).map(result => result shouldBe 1).unsafeToFuture
+      }
+      "return 0 if the id doesn't exist" in {
+        val userRepository = createRepository
+        userRepository.deleteUser(999).map(result => result shouldBe 0).unsafeToFuture
 
-      userRepository.findUser(id).map(result => result.value shouldBe userToInsert).unsafeToFuture
-
+      }
     }
 
   }
