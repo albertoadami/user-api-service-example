@@ -13,9 +13,9 @@ import org.http4s.circe.CirceEntityEncoder._
 
 class Authentication(userRepository: UserRepository) extends LazyLogging {
 
-  private val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { req =>
-    logger.error(s"authentication error during request ${req.req}")
-    OptionT.liftF(Forbidden(req.context))
+  private val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { result =>
+    logger.error(s"authentication error ${result.context} during request ${result.req}")
+    OptionT.liftF(Forbidden(result.context))
   }
 
   private def checkCredentials(
@@ -26,14 +26,12 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
       case Some(user) =>
         if (user.password == password) Right(UserInfo(email = email, enabled = user.enabled))
         else {
-          val error = "password is not correct"
-          logger.error(error)
-          Left(ErrorsResponse(List(ErrorItem(errorDescription = error))))
+          Left(ErrorsResponse(List(ErrorItem(errorDescription = "password is not correct"))))
         }
       case None =>
-        val error = s"user with email $email not found"
-        logger.error(error)
-        Left(ErrorsResponse(List(ErrorItem(errorDescription = error))))
+        Left(
+          ErrorsResponse(List(ErrorItem(errorDescription = s"user with email $email not found")))
+        )
     }
 
   private val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({
@@ -42,7 +40,6 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
         .get(headers.Authorization) match {
         case Some(authHeader) =>
           val basicHeader = authHeader.value.split(" ").toList.last
-          logger.debug(s"here the basic value $basicHeader")
           val credentials = BasicCredentials(basicHeader)
           checkCredentials(credentials.username, credentials.password)
             .map(_.fold(errors => Left(errors), user => Right(user)))
