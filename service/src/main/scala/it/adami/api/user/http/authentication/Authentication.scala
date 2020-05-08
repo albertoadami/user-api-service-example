@@ -25,9 +25,7 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
     userRepository.findUserByEmail(email) map {
       case Some(user) =>
         if (user.password == password) Right(UserInfo(email = email, enabled = user.enabled))
-        else {
-          Left(ErrorsResponse(List(ErrorItem(errorDescription = "password is not correct"))))
-        }
+        else Left(ErrorsResponse(List(ErrorItem(errorDescription = "password is not correct"))))
       case None =>
         Left(
           ErrorsResponse(List(ErrorItem(errorDescription = s"user with email $email not found")))
@@ -37,17 +35,12 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
   private val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({
     request =>
       request.headers
-        .get(headers.Authorization) match {
-        case Some(authHeader) =>
-          val basicHeader = authHeader.value.split(" ").toList.last
-          val credentials = BasicCredentials(basicHeader)
+        .get(headers.Authorization)
+        .map { authHeader =>
+          val credentials = BasicCredentials(authHeader.value.split(" ").toList.last)
           checkCredentials(credentials.username, credentials.password)
             .map(_.fold(errors => Left(errors), user => Right(user)))
-        case None =>
-          val errors =
-            ErrorsResponse(List(ErrorItem(errorDescription = "Authorization header not provided")))
-          IO(Left(errors))
-      }
+        }.getOrElse(IO(Left(ErrorsResponse(List(ErrorItem(errorDescription = "Authorization header not provided"))))))
   })
 
   /**

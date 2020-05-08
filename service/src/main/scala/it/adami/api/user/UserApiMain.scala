@@ -39,8 +39,8 @@ object UserApiMain extends IOApp with LazyLogging {
 
         val routes = Seq(
           new VersionRoutes(versionService),
-          new UserRoutes(userService, authentication.middleware),
-          new RegistrationRoutes(userService, serviceConfig)
+          new RegistrationRoutes(userService, serviceConfig),
+          new UserRoutes(userService, authentication.middleware)
         )
 
         val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
