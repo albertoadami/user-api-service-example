@@ -2,13 +2,13 @@ package it.adami.api.user.http.routes
 
 import cats.effect.IO
 import com.typesafe.scalalogging.LazyLogging
-import it.adami.api.user.http.json.CreateUserRequest
+import it.adami.api.user.http.json.{CreateUserRequest, UpdateUserRequest}
 import org.http4s.{HttpRoutes, Uri}
 import it.adami.api.user.services.UserService
 import org.http4s.dsl.io._
 import org.http4s.circe.CirceEntityEncoder._
-import it.adami.api.user.errors.UserNameAlreadyInUse
-import it.adami.api.user.validation.user.CreateUserValidation
+import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
+import it.adami.api.user.validation.user.{CreateUserValidation, UpdateUserValidation}
 import org.http4s.circe._
 import io.circe.generic.auto._
 import it.adami.api.user.config.ServiceConfig
@@ -32,6 +32,15 @@ class UserRoutes(userService: UserService, serviceConfig: ServiceConfig)
     }
   }
 
+  private def handleUpdateUserResponse(id: Int, req: UpdateUserRequest) = {
+    userService.updateUser(id, req).flatMap {
+      case Right(_) =>
+        NoContent()
+      case Left(UserNotFound) =>
+        NotFound()
+    }
+  }
+
   override val routes: HttpRoutes[IO] = HttpRoutes.of[IO] {
     case req @ POST -> Root / "users" =>
       for {
@@ -51,6 +60,15 @@ class UserRoutes(userService: UserService, serviceConfig: ServiceConfig)
       for {
         result <- userService.deleteUser(userId)
         response <- result.fold(_ => NotFound(), _ => NoContent())
+      } yield response
+    case req @ PUT -> Root / "users" / IntVar(userId) =>
+      for {
+        json <- req.decodeJson[UpdateUserRequest]
+        validated = UpdateUserValidation(json)
+        response <- validated.fold(
+          errors => BadRequest(getErrorsResponse(errors)),
+          valid => handleUpdateUserResponse(userId, valid)
+        )
       } yield response
 
   }

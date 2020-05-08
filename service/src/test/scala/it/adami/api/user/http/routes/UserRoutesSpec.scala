@@ -23,7 +23,8 @@ class UserRoutesSpec
     with EitherValues
     with BeforeAndAfterEach {
 
-  private val request = UserDataGenerator.generateCreateUserRequest
+  private val createRequest = UserDataGenerator.generateCreateUserRequest
+  private val updateRequest = UserDataGenerator.generateUpdateUserRequest
 
   private val userService = mock[UserService]
   private val serviceConfig = ServiceConfig("not-used", 8080, 999, "0.1", "localhost")
@@ -33,9 +34,9 @@ class UserRoutesSpec
     "POST /users is called" should {
       "return Created with a valid request" in {
 
-        when(userService.createUser(request)).thenReturn(IO.pure(Right(123)))
+        when(userService.createUser(createRequest)).thenReturn(IO.pure(Right(123)))
         val response = userRoutes
-          .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
+          .run(Request(method = POST, uri = uri"/users").withEntity(createRequest.asJson))
           .unsafeRunSync()
 
         response.status shouldBe Created
@@ -47,9 +48,9 @@ class UserRoutesSpec
         locationHeaderValue.contains(s"api/${serviceConfig.apiVersion}/users") shouldBe true
       }
       "return Conflict when the request email exists already" in {
-        when(userService.createUser(request)).thenReturn(IO.pure(Left(UserNameAlreadyInUse)))
+        when(userService.createUser(createRequest)).thenReturn(IO.pure(Left(UserNameAlreadyInUse)))
         val response = userRoutes
-          .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
+          .run(Request(method = POST, uri = uri"/users").withEntity(createRequest.asJson))
           .unsafeRunSync()
 
         response.status shouldBe Conflict
@@ -110,6 +111,42 @@ class UserRoutesSpec
           .thenReturn(IO.pure(Left(UserNotFound)))
         val response = userRoutes
           .run(Request(uri = uri"/users/999", method = DELETE))
+          .unsafeRunSync()
+
+        response.status shouldBe NotFound
+
+      }
+    }
+
+    "PUT /users/{id} is called" should {
+      "return BadRequest if the json is not valid" in {
+        val invalidReq = UserDataGenerator.generateUpdateUserRequest.copy(
+          gender = "invalid-gender",
+          firstname = "",
+          lastname = ""
+        )
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999", method = PUT).withEntity(invalidReq.asJson))
+          .unsafeRunSync()
+
+        response.status shouldBe BadRequest
+
+      }
+      "return NoContent if the id exist" in {
+        when(userService.updateUser(999, updateRequest))
+          .thenReturn(IO.pure(Right()))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999", method = PUT).withEntity(updateRequest.asJson))
+          .unsafeRunSync()
+
+        response.status shouldBe NoContent
+
+      }
+      "return NotFound if the id doesn't exist" in {
+        when(userService.updateUser(999, updateRequest))
+          .thenReturn(IO.pure(Left(UserNotFound)))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999", method = PUT).withEntity(updateRequest.asJson))
           .unsafeRunSync()
 
         response.status shouldBe NotFound

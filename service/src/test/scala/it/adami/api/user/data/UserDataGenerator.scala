@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import java.util.Date
 
 import it.adami.api.user.domain.User
-import it.adami.api.user.http.json.{CreateUserRequest, UserDetailResponse}
+import it.adami.api.user.http.json.{CreateUserRequest, UpdateUserRequest, UserDetailResponse}
 import it.adami.api.user.util.StringUtils
 
 import scala.util.Random
@@ -41,6 +41,14 @@ object UserDataGenerator {
       dateOfBirth = "07-07-2000",
       gender = "MALE",
       creationDate = "09-09-2012"
+    )
+
+  def generateUpdateUserRequest: UpdateUserRequest =
+    UpdateUserRequest(
+      firstname = Random.nextString(5),
+      lastname = Random.nextString(5),
+      dateOfBirth = "07-09-1990",
+      gender = "MALE"
     )
 
 }

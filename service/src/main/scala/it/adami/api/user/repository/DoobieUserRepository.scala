@@ -54,4 +54,15 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
         """.stripMargin.update.run
       .transact(xa)
 
+  override def updateUser(id: Int, user: User): IO[Unit] =
+    sql"""
+         UPDATE users
+         SET firstname = ${user.firstname},
+             lastname = ${user.lastname},
+             gender = ${user.gender},
+             birthday_date = ${user.dateOfBirth}
+         WHERE id = $id
+        """.stripMargin.update.run
+      .transact(xa)
+      .map(_ => ())
 }

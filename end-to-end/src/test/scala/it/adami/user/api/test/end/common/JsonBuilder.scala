@@ -16,4 +16,12 @@ object JsonBuilder {
       "dateOfBirth" -> Json.fromString("07-09-1993")
     )
 
+  def updateRequestJson: Json =
+    Json.obj(
+      "firstname" -> Json.fromString(Random.nextString(5)),
+      "lastname" -> Json.fromString(Random.nextString(5)),
+      "gender" -> Json.fromString("MALE"),
+      "dateOfBirth" -> Json.fromString("07-09-1993")
+    )
+
 }
