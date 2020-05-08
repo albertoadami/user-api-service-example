@@ -29,7 +29,7 @@ class UserRoutesSpec
   private val serviceConfig = ServiceConfig("not-used", 8080, 999, "0.1", "localhost")
   private val userRoutes = new UserRoutes(userService, serviceConfig).routes.orNotFound
 
-  "UserRoutes" when  {
+  "UserRoutes" when {
     "POST /users is called" should {
       "return Created with a valid request" in {
 
