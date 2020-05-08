@@ -16,6 +16,8 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def findUser(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
 
     override def deleteUser(id: Int): IO[Int] = IO.pure(1)
+
+    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
   }
 
   private val errorUserRepository = new UserRepository {
@@ -24,6 +26,8 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def findUser(id: Int): IO[Option[User]] = IO.pure(None)
 
     override def deleteUser(id: Int): IO[Int] = IO.pure(0)
+
+    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
   }
 
   val userService = new UserService(userRepository)
@@ -74,6 +78,22 @@ class UserServiceSpec extends SpecBase with EitherValues {
       "return UserNotFound if the id doesn't exist" in {
         errorUserService
           .deleteUser(999)
+          .map(value => value.left.value shouldBe UserNotFound)
+          .unsafeToFuture
+      }
+    }
+
+    "updateUser() is called" should {
+      "return Unit if update go right" in {
+        userService
+          .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
+          .map(value => value.isLeft shouldBe true)
+          .unsafeToFuture
+      }
+
+      "return UserNotFound if the id doesn't exist" in {
+        errorUserService
+          .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
           .map(value => value.left.value shouldBe UserNotFound)
           .unsafeToFuture
       }

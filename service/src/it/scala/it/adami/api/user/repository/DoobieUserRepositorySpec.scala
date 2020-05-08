@@ -88,6 +88,25 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
       }
     }
 
+    "updateUser(id, user) is called" should {
+      "return Unit when updating the user" in {
+        val userRepository = createRepository
+        val userToInsert = generateUser
+        val userToUpdate = generateUser.copy(firstname = Random.nextString(5), lastname = Random.nextString(5))
+        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+
+        userRepository.updateUser(id, userToUpdate).unsafeRunSync //do the update object
+
+        userRepository.findUser(id).map {result =>
+
+          val user = result.value
+          user.firstname shouldBe user.firstname
+          user.lastname shouldBe user.lastname
+
+        }.unsafeToFuture
+      }
+    }
+
   }
 
   private def createRepository: UserRepository = UserRepository(transactor)

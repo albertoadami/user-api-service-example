@@ -21,7 +21,7 @@ lazy val service = (project in file("service"))
   .settings(
     name := "user-api",
     scalacOptions += "-Ypartial-unification",
-    coverageExcludedPackages := ".*user;.*user.config;.*user.http",
+    coverageExcludedPackages := ".*user;.*user.config",
       libraryDependencies ++=
       http4sDependencies ++
       loggingDependencies ++

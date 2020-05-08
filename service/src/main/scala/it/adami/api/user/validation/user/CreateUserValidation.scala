@@ -5,7 +5,7 @@ import cats.syntax.contravariantSemigroupal._
 
 object CreateUserValidation extends UserValidator {
 
-  def apply(req: CreateUserRequest): ValidationResult[CreateUserRequest] = {
+  def apply(req: CreateUserRequest): ValidationResult[CreateUserRequest] =
     (
       validateFirstName(req.firstname),
       validateLastName(req.lastname),
@@ -14,6 +14,5 @@ object CreateUserValidation extends UserValidator {
       validateBirthDate(req.dateOfBirth),
       validateGender(req.gender)
     ).mapN(CreateUserRequest.apply)
-  }
 
 }
