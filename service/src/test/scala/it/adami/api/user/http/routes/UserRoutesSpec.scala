@@ -12,7 +12,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import it.adami.api.user.SpecBase
 import it.adami.api.user.config.ServiceConfig
-import it.adami.api.user.errors.UserNameAlreadyInUse
+import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
 import org.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, EitherValues, OptionValues}
 
@@ -29,68 +29,94 @@ class UserRoutesSpec
   private val serviceConfig = ServiceConfig("not-used", 8080, 999, "0.1", "localhost")
   private val userRoutes = new UserRoutes(userService, serviceConfig).routes.orNotFound
 
-  "UserRoutes" should {
-    "return Created when a valid user creation request is provided" in {
+  "UserRoutes" when  {
+    "POST /users is called" should {
+      "return Created with a valid request" in {
 
-      when(userService.createUser(request)).thenReturn(IO.pure(Right(123)))
-      val response = userRoutes
-        .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
-        .unsafeRunSync()
+        when(userService.createUser(request)).thenReturn(IO.pure(Right(123)))
+        val response = userRoutes
+          .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
+          .unsafeRunSync()
 
-      response.status shouldBe Created
+        response.status shouldBe Created
 
-      val locationHeaderValue =
-        response.headers.toList.find(h => h.name.toString == "Location").value.value
+        val locationHeaderValue =
+          response.headers.toList.find(h => h.name.toString == "Location").value.value
 
-      locationHeaderValue.contains(serviceConfig.externalHost) shouldBe true
-      locationHeaderValue.contains(s"api/${serviceConfig.apiVersion}/users") shouldBe true
+        locationHeaderValue.contains(serviceConfig.externalHost) shouldBe true
+        locationHeaderValue.contains(s"api/${serviceConfig.apiVersion}/users") shouldBe true
+      }
+      "return Conflict when the request email exists already" in {
+        when(userService.createUser(request)).thenReturn(IO.pure(Left(UserNameAlreadyInUse)))
+        val response = userRoutes
+          .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
+          .unsafeRunSync()
+
+        response.status shouldBe Conflict
+
+      }
+
+      "return BadRequest if the request is invalid" in {
+        val invalidReq = UserDataGenerator.generateCreateUserRequest.copy(gender = "invalid-gender")
+        val response = userRoutes
+          .run(Request(method = POST, uri = uri"/users").withEntity(invalidReq.asJson))
+          .unsafeRunSync()
+
+        response.status shouldBe BadRequest
+      }
     }
 
-    "return Conflict when the user creation request contains a username already in use" in {
-      when(userService.createUser(request)).thenReturn(IO.pure(Left(UserNameAlreadyInUse)))
-      val response = userRoutes
-        .run(Request(method = POST, uri = uri"/users").withEntity(request.asJson))
-        .unsafeRunSync()
+    "GET /users/{id} is called" should {
+      "return NotFound if the id doesn't exist" in {
+        when(userService.findUser(999)).thenReturn(IO.pure(None))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999"))
+          .unsafeRunSync()
 
-      response.status shouldBe Conflict
+        response.status shouldBe NotFound
+      }
+
+      "return Ok with the json if the id exist" in {
+        val userGenerated = UserDataGenerator.generateUserDetailResponse
+        when(userService.findUser(999))
+          .thenReturn(IO.pure(Some(userGenerated)))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999"))
+          .unsafeRunSync()
+
+        val hcursor = response.as[Json].unsafeRunSync.hcursor
+        hcursor.get[String]("firstname").right.value shouldBe userGenerated.firstname
+        hcursor.get[String]("lastname").right.value shouldBe userGenerated.lastname
+        hcursor.get[String]("email").right.value shouldBe userGenerated.email
+        hcursor.get[String]("gender").right.value shouldBe userGenerated.gender
+        hcursor.get[String]("dateOfBirth").right.value shouldBe userGenerated.dateOfBirth
+      }
 
     }
 
-    "return BadRequest if the user creation request is invalid" in {
-      val invalidReq = UserDataGenerator.generateCreateUserRequest.copy(gender = "invalid-gender")
-      val response = userRoutes
-        .run(Request(method = POST, uri = uri"/users").withEntity(invalidReq.asJson))
-        .unsafeRunSync()
+    "DELETE /users/{id} is called" should {
+      "return NoContent if the id exist" in {
+        when(userService.deleteUser(999))
+          .thenReturn(IO.pure(Right()))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999", method = DELETE))
+          .unsafeRunSync()
 
-      response.status shouldBe BadRequest
+        response.status shouldBe NoContent
+      }
+
+      "return NotFound if the id doesn't exist" in {
+        when(userService.deleteUser(999))
+          .thenReturn(IO.pure(Left(UserNotFound)))
+        val response = userRoutes
+          .run(Request(uri = uri"/users/999", method = DELETE))
+          .unsafeRunSync()
+
+        response.status shouldBe NotFound
+
+      }
     }
 
-    "return NotFound if the requested user not exist" in {
-      when(userService.findUser(999)).thenReturn(IO.pure(None))
-      val response = userRoutes
-        .run(Request(uri = uri"/users/999"))
-        .unsafeRunSync()
-
-      response.status shouldBe NotFound
-    }
-
-    "return Ok with the json if the user exist" in {
-      val userGenerated = UserDataGenerator.generateUserDetailResponse
-      when(userService.findUser(999))
-        .thenReturn(IO.pure(Some(userGenerated)))
-      val response = userRoutes
-        .run(Request(uri = uri"/users/999"))
-        .unsafeRunSync()
-
-      val hcursor = response.as[Json].unsafeRunSync.hcursor
-      hcursor.get[String]("firstname").right.value shouldBe userGenerated.firstname
-      hcursor.get[String]("lastname").right.value shouldBe userGenerated.lastname
-      hcursor.get[String]("email").right.value shouldBe userGenerated.email
-      hcursor.get[String]("gender").right.value shouldBe userGenerated.gender
-      hcursor.get[String]("dateOfBirth").right.value shouldBe userGenerated.dateOfBirth
-    }
-
-    "return NoContent with a delete user with invalid id request" in {}
   }
 
 }
