@@ -11,8 +11,6 @@ import org.http4s.server.AuthMiddleware
 import io.circe.generic.auto._
 import org.http4s.circe.CirceEntityEncoder._
 
-import scala.util.Random
-
 class Authentication(userRepository: UserRepository) extends LazyLogging {
 
   private val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { req =>
@@ -26,7 +24,7 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
   ): IO[Either[ErrorsResponse, UserInfo]] =
     userRepository.findUserByEmail(email) map {
       case Some(user) =>
-        if (user.password == password) Right(UserInfo(1, email = email, enabled = user.enabled))
+        if (user.password == password) Right(UserInfo(email = email, enabled = user.enabled))
         else {
           val error = "password is not correct"
           logger.error(error)
@@ -43,8 +41,9 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
       request.headers
         .get(headers.Authorization) match {
         case Some(authHeader) =>
-          logger.info(s"here the header $authHeader")
-          val credentials = BasicCredentials(authHeader.value)
+          val basicHeader = authHeader.value.split(" ").toList.last
+          logger.debug(s"here the basic value $basicHeader")
+          val credentials = BasicCredentials(basicHeader)
           checkCredentials(credentials.username, credentials.password)
             .map(_.fold(errors => Left(errors), user => Right(user)))
         case None =>
