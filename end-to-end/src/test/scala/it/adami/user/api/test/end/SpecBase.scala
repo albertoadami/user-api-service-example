@@ -24,6 +24,11 @@ trait SpecBase
 
   protected val client: Client[IO] = ClientBuilder.createClient
 
+  /**
+   * utility method that create a user in the system
+   * @param createReq the json req to use for create the new user
+   * @return a tuple (String, Headers) containing the location of the created resource and the Authorization header
+   */
   protected def registerUser(createReq: Json): (String, Headers) = {
     val email = createReq.hcursor.get[String]("email").right.get
     val password = createReq.hcursor.get[String]("password").right.get
@@ -35,7 +40,7 @@ trait SpecBase
           .find(_.name.toString == "Location")
           .get
           .value
-          .replace("localhost:8080", serviceHost)
+          .replace("localhost:8080", serviceHost)//workaround because with docker we don't know the external ip
         IO.pure(location, Headers.of(Authorization(BasicCredentials(email, password))))
       }
       .unsafeRunSync()

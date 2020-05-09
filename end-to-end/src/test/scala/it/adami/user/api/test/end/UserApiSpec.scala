@@ -2,11 +2,9 @@ package it.adami.user.api.test.end
 
 import cats.effect.IO
 import it.adami.user.api.test.end.common.JsonBuilder
-import org.http4s.{BasicCredentials, Header, Headers, Request, Uri}
-import org.http4s.dsl.io.POST
+import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
-import org.http4s.headers.Authorization
 
 class UserApiSpec extends SpecBase {
 
