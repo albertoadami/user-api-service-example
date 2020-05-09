@@ -11,7 +11,7 @@ object JsonBuilder {
       "firstname" -> Json.fromString(Random.nextString(5)),
       "lastname" -> Json.fromString(Random.nextString(5)),
       "email" -> Json.fromString(s"test${Random.nextInt}@test.com"),
-      "password" -> Json.fromString(Random.nextString(5)),
+      "password" -> Json.fromString(s"password-${Random.nextInt}"),
       "gender" -> Json.fromString("MALE"),
       "dateOfBirth" -> Json.fromString("07-09-1993")
     )

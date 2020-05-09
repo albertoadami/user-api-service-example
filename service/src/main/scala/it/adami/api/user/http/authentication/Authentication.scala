@@ -32,15 +32,22 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
         )
     }
 
-  private val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({
-    request =>
-      request.headers
-        .get(headers.Authorization)
-        .map { authHeader =>
-          val credentials = BasicCredentials(authHeader.value.split(" ").toList.last)
-          checkCredentials(credentials.username, credentials.password)
-            .map(_.fold(errors => Left(errors), user => Right(user)))
-        }.getOrElse(IO(Left(ErrorsResponse(List(ErrorItem(errorDescription = "Authorization header not provided"))))))
+  private val authUser
+      : Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ request =>
+    request.headers
+      .get(headers.Authorization)
+      .map { authHeader =>
+        val credentials = BasicCredentials(authHeader.value.split(" ").toList.last)
+        checkCredentials(credentials.username, credentials.password)
+          .map(_.fold(errors => Left(errors), user => Right(user)))
+      }
+      .getOrElse(
+        IO(
+          Left(
+            ErrorsResponse(List(ErrorItem(errorDescription = "Authorization header not provided")))
+          )
+        )
+      )
   })
 
   /**

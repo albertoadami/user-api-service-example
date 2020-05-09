@@ -7,7 +7,6 @@ import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
 
-
 class RegistrationApiSpec extends SpecBase {
 
   "RegistrationApi" when {
@@ -38,9 +37,6 @@ class RegistrationApiSpec extends SpecBase {
       }
     }
 
-
   }
-
-
 
 }
