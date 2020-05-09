@@ -18,6 +18,9 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def deleteUser(id: Int): IO[Int] = IO.pure(1)
 
     override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+
+    override def findUserByEmail(email: String): IO[Option[User]] =
+      IO.pure(Some(UserDataGenerator.generateUser))
   }
 
   private val errorUserRepository = new UserRepository {
@@ -28,6 +31,8 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def deleteUser(id: Int): IO[Int] = IO.pure(0)
 
     override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+
+    override def findUserByEmail(email: String): IO[Option[User]] = IO.pure(None)
   }
 
   val userService = new UserService(userRepository)

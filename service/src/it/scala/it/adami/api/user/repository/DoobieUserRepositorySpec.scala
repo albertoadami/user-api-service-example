@@ -73,6 +73,26 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
 
     }
 
+    "findUserByEmail(email) is called" should {
+      "return None if an user with the email doesn't exist" in {
+        val userRepository = createRepository
+        createRepository.findUserByEmail("test@test.com").map(_.isEmpty shouldBe true).unsafeToFuture
+      }
+
+      "return the user if an user with email exist" in {
+        val userRepository = createRepository
+        val userToInsert = generateUser
+        createRepository.insertUser(userToInsert).unsafeRunSync()
+
+        createRepository.findUserByEmail(userToInsert.email).map{ result =>
+
+          val user = result.value
+          user.email shouldBe userToInsert.email
+        }.unsafeToFuture
+
+      }
+    }
+
     "deleteUser(id) is called" should {
       "return 1 if the id exist" in {
         val userRepository = createRepository

@@ -11,62 +11,18 @@ import org.http4s.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import it.adami.api.user.SpecBase
-import it.adami.api.user.config.ServiceConfig
-import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
+import it.adami.api.user.errors.UserNotFound
 import org.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, EitherValues, OptionValues}
 
-class UserRoutesSpec
-    extends SpecBase
-    with MockitoSugar
-    with OptionValues
-    with EitherValues
-    with BeforeAndAfterEach {
+class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with EitherValues with BeforeAndAfterEach {
 
-  private val createRequest = UserDataGenerator.generateCreateUserRequest
   private val updateRequest = UserDataGenerator.generateUpdateUserRequest
 
   private val userService = mock[UserService]
-  private val serviceConfig = ServiceConfig("not-used", 8080, 999, "0.1", "localhost")
-  private val userRoutes = new UserRoutes(userService, serviceConfig).routes.orNotFound
+  private val userRoutes = new UserRoutes(userService, mockAuthMiddleWare).routes.orNotFound
 
   "UserRoutes" when {
-    "POST /users is called" should {
-      "return Created with a valid request" in {
-
-        when(userService.createUser(createRequest)).thenReturn(IO.pure(Right(123)))
-        val response = userRoutes
-          .run(Request(method = POST, uri = uri"/users").withEntity(createRequest.asJson))
-          .unsafeRunSync()
-
-        response.status shouldBe Created
-
-        val locationHeaderValue =
-          response.headers.toList.find(h => h.name.toString == "Location").value.value
-
-        locationHeaderValue.contains(serviceConfig.externalHost) shouldBe true
-        locationHeaderValue.contains(s"api/${serviceConfig.apiVersion}/users") shouldBe true
-      }
-      "return Conflict when the request email exists already" in {
-        when(userService.createUser(createRequest)).thenReturn(IO.pure(Left(UserNameAlreadyInUse)))
-        val response = userRoutes
-          .run(Request(method = POST, uri = uri"/users").withEntity(createRequest.asJson))
-          .unsafeRunSync()
-
-        response.status shouldBe Conflict
-
-      }
-
-      "return BadRequest if the request is invalid" in {
-        val invalidReq = UserDataGenerator.generateCreateUserRequest.copy(gender = "invalid-gender")
-        val response = userRoutes
-          .run(Request(method = POST, uri = uri"/users").withEntity(invalidReq.asJson))
-          .unsafeRunSync()
-
-        response.status shouldBe BadRequest
-      }
-    }
-
     "GET /users/{id} is called" should {
       "return NotFound if the id doesn't exist" in {
         when(userService.findUser(999)).thenReturn(IO.pure(None))
