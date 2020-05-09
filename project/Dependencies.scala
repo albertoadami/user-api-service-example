@@ -48,4 +48,10 @@ object Dependencies {
     "org.tpolecat" %% "doobie-scalatest" % doobieVersion % IntegrationTest
   )
 
+  val gatlingVersion = "3.3.1"
+  lazy val performanceDependencies = Seq(
+    "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion % Test,
+    "io.gatling" % "gatling-test-framework" % gatlingVersion % Test
+  )
+
 }
