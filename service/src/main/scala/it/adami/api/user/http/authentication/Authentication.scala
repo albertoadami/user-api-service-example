@@ -32,8 +32,7 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
         )
     }
 
-  private val authUser
-      : Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ request =>
+  private val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ request =>
     request.headers
       .get(headers.Authorization)
       .map { authHeader =>

@@ -15,12 +15,7 @@ import it.adami.api.user.errors.UserNotFound
 import org.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, EitherValues, OptionValues}
 
-class UserRoutesSpec
-    extends SpecBase
-    with MockitoSugar
-    with OptionValues
-    with EitherValues
-    with BeforeAndAfterEach {
+class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with EitherValues with BeforeAndAfterEach {
 
   private val updateRequest = UserDataGenerator.generateUpdateUserRequest
 

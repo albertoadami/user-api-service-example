@@ -1,13 +1,7 @@
 package it.adami.api.user.validation.user
 
 import cats.data.ValidatedNec
-import it.adami.api.user.validation.{
-  DomainValidation,
-  InvalidEmail,
-  InvalidGender,
-  InvalidPassword,
-  IsEmpty
-}
+import it.adami.api.user.validation.{DomainValidation, InvalidEmail, InvalidGender, InvalidPassword, IsEmpty}
 import cats.implicits._
 import it.adami.api.user.util.StringUtils
 

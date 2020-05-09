@@ -14,9 +14,7 @@ import it.adami.api.user.errors.UserNameAlreadyInUse
 import org.http4s.circe._
 import org.http4s.headers.Location
 
-class RegistrationRoutes(userService: UserService, serviceConfig: ServiceConfig)
-    extends BaseRoutes
-    with LazyLogging {
+class RegistrationRoutes(userService: UserService, serviceConfig: ServiceConfig) extends BaseRoutes with LazyLogging {
 
   private def handleCreateUserResponses(req: CreateUserRequest) = {
     //TODO maybe is better to move the location builder in a separate class
