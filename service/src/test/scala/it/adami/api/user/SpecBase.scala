@@ -16,7 +16,7 @@ trait SpecBase extends AnyWordSpec with Matchers {
   def mockAuthMiddleWare: AuthMiddleware[IO, UserInfo] = {
     val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { req => OptionT.liftF(Forbidden(req.context)) }
     val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ _ =>
-      IO.pure(Right(UserInfo("test@test.it", enabled = true)))
+      IO.pure(Right(UserInfo(1, "test@test.it", enabled = true)))
     })
     AuthMiddleware(authUser, onFailure)
   }

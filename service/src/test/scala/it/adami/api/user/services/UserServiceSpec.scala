@@ -104,6 +104,15 @@ class UserServiceSpec extends SpecBase with EitherValues {
       }
     }
 
+    "activateUser() is called" should {
+      "return Unit" in {
+        userService
+          .activateUser(999)
+          .map(_ => 1 shouldBe 1)
+          .unsafeToFuture
+      }
+    }
+
   }
 
 }

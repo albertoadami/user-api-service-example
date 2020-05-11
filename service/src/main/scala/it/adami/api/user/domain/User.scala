@@ -4,6 +4,7 @@ import java.sql.Timestamp
 import java.util.Date
 
 final case class User(
+    id: Option[Int] = None,
     firstname: String,
     lastname: String,
     email: String,

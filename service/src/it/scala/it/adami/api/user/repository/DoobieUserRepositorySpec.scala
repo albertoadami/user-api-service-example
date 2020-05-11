@@ -15,13 +15,14 @@ import scala.util.Random
 class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer with OptionValues {
 
   private def generateUser = User(
-    Random.nextString(5),
-    Random.nextString(5),
-    Random.nextString(5),
-    Random.nextString(5),
-    new Date(1990, 6, 8),
-    s"${Random.nextString(5)}@test.com",
-    Timestamp.valueOf(LocalDateTime.now()),
+    id = None,
+    firstname = Random.nextString(5),
+    lastname = Random.nextString(5),
+    email = s"${Random.nextString(5)}@test.com",
+    password = Random.nextString(5),
+    dateOfBirth = new Date(1990, 6, 8),
+    gender = "MALE",
+    creationDate = Timestamp.valueOf(LocalDateTime.now()),
     enabled = false
   )
 
@@ -67,7 +68,19 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
         val userToInsert = generateUser
         val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
 
-        userRepository.findUser(id).map(result => result.value shouldBe userToInsert).unsafeToFuture
+        userRepository.findUser(id).map{ result =>
+          val user = result.value
+          user.id.isDefined shouldBe true
+          user.firstname shouldBe userToInsert.firstname
+          user.lastname shouldBe userToInsert.lastname
+          user.email shouldBe userToInsert.email
+          user.password shouldBe userToInsert.password
+          user.dateOfBirth shouldBe userToInsert.dateOfBirth
+          user.gender shouldBe userToInsert.gender
+          user.creationDate shouldBe userToInsert.creationDate
+          user.enabled shouldBe userToInsert.enabled
+
+        }.unsafeToFuture
 
       }
 

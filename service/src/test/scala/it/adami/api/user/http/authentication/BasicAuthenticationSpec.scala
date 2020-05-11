@@ -13,7 +13,7 @@ import org.http4s.implicits._
 
 import scala.util.Random
 
-class AuthenticationSpec extends SpecBase {
+class BasicAuthenticationSpec extends SpecBase {
 
   private val user = UserDataGenerator.generateUser
 
@@ -26,7 +26,7 @@ class AuthenticationSpec extends SpecBase {
     override def deleteUser(id: Int): IO[Int] = IO.pure(1)
   }
 
-  val authentication = new Authentication(userRepository)
+  val authentication = Authentication.basic(userRepository)
 
   private val simpleTestRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
     case GET -> Root / "test" as user =>
@@ -35,7 +35,7 @@ class AuthenticationSpec extends SpecBase {
 
   private val authTestRoutes = authentication.middleware(simpleTestRoutes).orNotFound
 
-  "Authentication" should {
+  "BasicAuthentication" should {
     "return Forbidden when the Authorization header is not provided" in {
 
       val result = authTestRoutes.run(Request(uri = uri"/test")).unsafeRunSync

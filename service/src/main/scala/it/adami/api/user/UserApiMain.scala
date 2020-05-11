@@ -4,7 +4,7 @@ import java.util.concurrent.Executors
 
 import cats.effect.{ExitCode, IOApp}
 import org.http4s.server.blaze.BlazeServerBuilder
-import it.adami.api.user.http.routes.{HealthRoutes, RegistrationRoutes, UserRoutes, VersionRoutes}
+import it.adami.api.user.http.routes.{AccountRoutes, HealthRoutes, SignUpRoutes, UserRoutes, VersionRoutes}
 import com.typesafe.scalalogging.LazyLogging
 import it.adami.api.user.config.AppConfig
 import it.adami.api.user.services.{UserService, VersionService}
@@ -32,15 +32,18 @@ object UserApiMain extends IOApp with LazyLogging {
       DatabaseManager.generateTransactor(postgresConfig)(contextShift, executionContext).use { xa =>
         val userRepository = UserRepository(xa)
 
-        val authentication = new Authentication(userRepository)
+        val authentication = Authentication.basic(userRepository)
 
         val userService = new UserService(userRepository)
         val versionService = new VersionService
 
+        val middleware = authentication.middleware
+
         val routes = Seq(
           new VersionRoutes(versionService),
-          new RegistrationRoutes(userService, serviceConfig),
-          new UserRoutes(userService, authentication.middleware)
+          new SignUpRoutes(userService, serviceConfig),
+          new UserRoutes(userService, middleware),
+          new AccountRoutes(userService, middleware)
         )
 
         val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)

@@ -52,4 +52,13 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
         IO(Left(UserNotFound))
     }
 
+  def activateUser(id: Int): IO[Unit] =
+    userRepository.findUser(id) flatMap {
+      case Some(user) =>
+        val uppatedUser = user.copy(enabled = true)
+        userRepository
+          .updateUser(id, uppatedUser)
+          .map(_ => Right())
+    }
+
 }

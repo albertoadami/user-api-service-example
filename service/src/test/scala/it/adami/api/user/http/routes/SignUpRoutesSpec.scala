@@ -15,12 +15,12 @@ import org.http4s.circe._
 import org.scalatest.OptionValues
 import io.circe.syntax._
 
-class RegistrationRoutesSpec extends SpecBase with MockitoSugar with OptionValues {
+class SignUpRoutesSpec extends SpecBase with MockitoSugar with OptionValues {
 
   private val userService = mock[UserService]
   private val serviceConfig = ServiceConfig("not-used", 8080, 999, "0.1", "localhost")
   private val registrationRoutes =
-    new RegistrationRoutes(userService, serviceConfig).routes.orNotFound
+    new SignUpRoutes(userService, serviceConfig).routes.orNotFound
 
   private val createRequest = UserDataGenerator.generateCreateUserRequest
 
