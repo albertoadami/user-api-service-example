@@ -12,5 +12,6 @@ final case class User(
     dateOfBirth: Date,
     gender: String,
     creationDate: Timestamp,
-    enabled: Boolean
+    enabled: Boolean,
+    lastUpdatedDate: Option[Timestamp] = None
 )
