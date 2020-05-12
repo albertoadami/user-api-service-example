@@ -8,6 +8,8 @@ import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
 import it.adami.api.user.repository.UserRepository
 import org.scalatest.EitherValues
 
+import scala.util.Random
+
 class UserServiceSpec extends SpecBase with EitherValues {
 
   private val userRepository = new UserRepository {
@@ -113,6 +115,23 @@ class UserServiceSpec extends SpecBase with EitherValues {
             .unsafeRunSync
         result.left.value shouldBe UserNotFound
       }
+    }
+
+    "searchUsers() is called" should {
+      "return the list of users that match the search query" in {
+        userService
+          .searchUsers(1, Random.nextString(5))
+          .map(_.items.isEmpty shouldBe false)
+          .unsafeToFuture
+      }
+
+      "return an empty result it there aren't users that match the query" in {
+        errorUserService
+          .searchUsers(1, Random.nextString(5))
+          .map(_.items.isEmpty shouldBe true)
+          .unsafeToFuture
+      }
+
     }
 
   }

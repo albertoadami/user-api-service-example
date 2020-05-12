@@ -74,7 +74,6 @@ class UserRoutesSpec
         response.status shouldBe Ok
 
         val hcursor = response.as[Json].unsafeRunSync.hcursor
-        hcursor.downField("items")
 
       }
     }
