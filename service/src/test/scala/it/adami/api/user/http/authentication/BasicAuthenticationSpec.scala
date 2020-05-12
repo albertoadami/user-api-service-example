@@ -24,6 +24,7 @@ class BasicAuthenticationSpec extends SpecBase {
       IO.pure(Some(user.copy(email = email)))
     override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
     override def deleteUser(id: Int): IO[Int] = IO.pure(1)
+    override def searchUsers(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
 
   val authentication = Authentication.basic(userRepository)

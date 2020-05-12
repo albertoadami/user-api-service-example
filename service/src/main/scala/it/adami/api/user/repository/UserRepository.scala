@@ -10,6 +10,7 @@ trait UserRepository {
   def findUserByEmail(email: String): IO[Option[User]]
   def updateUser(id: Int, user: User): IO[Unit]
   def deleteUser(id: Int): IO[Int]
+  def searchUsers(user: Int, search: String): IO[Seq[User]]
 }
 
 object UserRepository {

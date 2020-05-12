@@ -24,6 +24,8 @@ class ProfileServiceSpec extends SpecBase with OptionValues {
     override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
 
     override def deleteUser(id: Int): IO[Int] = IO(Random.nextInt(1))
+
+    override def searchUsers(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
   private val profileService = new ProfileService(userRepository)
 

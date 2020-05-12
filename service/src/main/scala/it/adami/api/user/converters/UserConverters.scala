@@ -4,7 +4,8 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 import it.adami.api.user.domain.User
-import it.adami.api.user.http.json.{CreateUserRequest, UserDetailResponse, UserProfileResponse}
+
+import it.adami.api.user.http.json.{CreateUserRequest, SearchUserItem, UserDetailResponse, UserProfileResponse}
 import it.adami.api.user.util.StringUtils
 
 object UserConverters {
@@ -41,6 +42,17 @@ object UserConverters {
       gender = user.gender,
       creationDate = user.creationDate.toString,
       enabled = user.enabled
+    )
+
+  implicit def convertToUserSearchDetail(user: User): SearchUserItem =
+    SearchUserItem(
+      id = user.id.get,
+      firstName = user.firstName,
+      lastName = user.lastName,
+      email = user.email,
+      dateOfBirth = user.dateOfBirth.toString,
+      gender = user.gender,
+      creationDate = user.creationDate.toString
     )
 
 }

@@ -77,4 +77,15 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
       .option
       .transact(xa)
 
+  override def searchUsers(user: Int, search: String): IO[Seq[User]] =
+    sql"""
+         SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
+         FROM users u
+         WHERE u.enabled = TRUE AND u.id <> $user AND
+               $search ~ u.firstname
+       """.stripMargin
+      .query[User]
+      .to[Seq]
+      .transact(xa)
+
 }

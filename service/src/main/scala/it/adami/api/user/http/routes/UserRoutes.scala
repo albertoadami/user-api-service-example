@@ -20,6 +20,8 @@ class UserRoutes(
 ) extends BaseRoutes
     with LazyLogging {
 
+  private object SearchQueryParamMatcher extends QueryParamDecoderMatcher[String]("search")
+
   private def handleUpdateUserResponse(id: Int, req: UpdateUserRequest) = {
     userService.updateUser(id, req).flatMap {
       case Right(_) =>
@@ -30,17 +32,23 @@ class UserRoutes(
   }
 
   private val authedRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
-    case GET -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
+    case GET -> Root / "users" :? SearchQueryParamMatcher(search) as user if user.enabled =>
+      for {
+        result <- userService.searchUsers(user.id, search)
+        response <- Ok(result)
+      } yield response
+
+    case GET -> Root / "users" / IntVar(userId) as user if user.enabled =>
       for {
         result <- userService.findUser(userId)
         response <- result.fold(NotFound())(value => Ok(value))
       } yield response
-    case DELETE -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
+    case DELETE -> Root / "users" / IntVar(userId) as user if user.enabled =>
       for {
         result <- userService.deleteUser(userId)
         response <- result.fold(_ => NotFound(), _ => NoContent())
       } yield response
-    case req @ PUT -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
+    case req @ PUT -> Root / "users" / IntVar(userId) as user if user.enabled =>
       for {
         json <- req.req.decodeJson[UpdateUserRequest]
         validated = UpdateUserValidation(json)
