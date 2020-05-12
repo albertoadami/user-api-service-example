@@ -5,7 +5,7 @@ import com.dimafeng.testcontainers.{ForAllTestContainer, LazyContainer, Multiple
 import io.circe.Json
 import it.adami.user.api.test.end.common.ClientBuilder
 import it.adami.user.api.test.end.common.containers.UserApiContainer
-import org.http4s.{BasicCredentials, Headers, Request, Uri}
+import org.http4s.{BasicCredentials, Headers, Request, Status, Uri}
 import org.http4s.client.Client
 import org.http4s.dsl.io.POST
 import org.scalatest.matchers.should.Matchers
@@ -13,11 +13,7 @@ import org.scalatest.wordspec.AsyncWordSpecLike
 import org.http4s.circe._
 import org.http4s.headers.Authorization
 
-trait SpecBase
-    extends AsyncWordSpecLike
-    with Matchers
-    with UserApiContainer
-    with ForAllTestContainer {
+trait SpecBase extends AsyncWordSpecLike with Matchers with UserApiContainer with ForAllTestContainer {
 
   override val container: MultipleContainers =
     MultipleContainers(LazyContainer(postgresContainer), LazyContainer(userApiContainer))
@@ -47,6 +43,24 @@ trait SpecBase
         IO.pure(location, Headers.of(Authorization(BasicCredentials(email, password))))
       }
       .unsafeRunSync()
+
+  }
+
+  /**
+    * Method that activate a user using the basic auth header
+    * @param headers contains the authorization header with the credentials
+    * @return
+    */
+  protected def activateUser(headers: Headers): Status = {
+    val postReq: Request[IO] =
+      Request(method = POST, uri = Uri.unsafeFromString(activateUserApiPath)).withHeaders(headers)
+    client.status(postReq).unsafeRunSync()
+  }
+
+  protected def registerAndActivateUser(createReq: Json): (String, Headers) = {
+    val result = registerUser(createReq)
+    activateUser(result._2)
+    result
   }
 
 }

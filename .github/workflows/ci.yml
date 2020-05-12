@@ -18,11 +18,9 @@ jobs:
     - name: Check dependencies
       run: sbt unusedCompileDependenciesTest
     - name: Compile
-      run: sbt clean coverage compile
+      run: sbt clean compile
     - name: Test
-      run: sbt test
-    - name: Integration test
-      run: sbt it:test
+      run: sbt coverage test it:test
     - name: Check coverage
       run: sbt coverageReport
     - name: Build docker image

@@ -11,34 +11,25 @@ import org.http4s.server.AuthMiddleware
 import io.circe.generic.auto._
 import org.http4s.circe.CirceEntityEncoder._
 
-class Authentication(userRepository: UserRepository) extends LazyLogging {
+trait Authentication extends LazyLogging {
+
+  def userRepository: UserRepository
 
   private val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { result =>
     logger.error(s"authentication error ${result.context} during request ${result.req}")
     OptionT.liftF(Forbidden(result.context))
   }
 
-  private def checkCredentials(
-      email: String,
-      password: String
-  ): IO[Either[ErrorsResponse, UserInfo]] =
-    userRepository.findUserByEmail(email) map {
-      case Some(user) =>
-        if (user.password == password) Right(UserInfo(email = email, enabled = user.enabled))
-        else Left(ErrorsResponse(List(ErrorItem(errorDescription = "password is not correct"))))
-      case None =>
-        Left(
-          ErrorsResponse(List(ErrorItem(errorDescription = s"user with email $email not found")))
-        )
-    }
+  protected def checkCredentials(email: String, password: String): IO[Either[ErrorsResponse, UserInfo]]
 
   private val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ request =>
     request.headers
       .get(headers.Authorization)
-      .map { authHeader =>
-        val credentials = BasicCredentials(authHeader.value.split(" ").toList.last)
-        checkCredentials(credentials.username, credentials.password)
-          .map(_.fold(errors => Left(errors), user => Right(user)))
+      .map(_.credentials)
+      .map {
+        case BasicCredentials(username, password) =>
+          checkCredentials(username, password)
+            .map(_.fold(errors => Left(errors), user => Right(user)))
       }
       .getOrElse(
         IO(
@@ -55,4 +46,8 @@ class Authentication(userRepository: UserRepository) extends LazyLogging {
     */
   def middleware: AuthMiddleware[IO, UserInfo] = AuthMiddleware(authUser, onFailure)
 
+}
+
+object Authentication {
+  def basic(userRepository: UserRepository): Authentication = new BasicAuthentication(userRepository)
 }

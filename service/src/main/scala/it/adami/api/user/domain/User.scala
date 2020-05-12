@@ -4,6 +4,7 @@ import java.sql.Timestamp
 import java.util.Date
 
 final case class User(
+    id: Option[Int] = None,
     firstname: String,
     lastname: String,
     email: String,
@@ -11,5 +12,6 @@ final case class User(
     dateOfBirth: Date,
     gender: String,
     creationDate: Timestamp,
-    enabled: Boolean
+    enabled: Boolean,
+    lastUpdatedDate: Option[Timestamp] = None
 )

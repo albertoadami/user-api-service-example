@@ -18,7 +18,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
         .transact(xa)
 
     val checkIfExist =
-      sql"""SELECT firstname, lastname, email, password, birthday_date, gender, creation_date, enabled
+      sql"""SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
             FROM users u
             WHERE u.email = ${user.email}
          """.stripMargin
@@ -38,7 +38,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
   override def findUser(id: Int): IO[Option[User]] = {
     sql"""
-          SELECT firstname, lastname, email, password, birthday_date, gender, creation_date, enabled
+          SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
           FROM users u
           WHERE u.id = $id
        """
@@ -60,7 +60,8 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
          SET firstname = ${user.firstname},
              lastname = ${user.lastname},
              gender = ${user.gender},
-             birthday_date = ${user.dateOfBirth}
+             birthday_date = ${user.dateOfBirth},
+             enabled = ${user.enabled}
          WHERE id = $id
         """.stripMargin.update.run
       .transact(xa)
@@ -68,7 +69,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
   override def findUserByEmail(email: String): IO[Option[User]] =
     sql"""
-          SELECT firstname, lastname, email, password, birthday_date, gender, creation_date, enabled
+          SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
           FROM users u
           WHERE u.email = $email
        """

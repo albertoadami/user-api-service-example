@@ -30,17 +30,17 @@ class UserRoutes(
   }
 
   private val authedRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
-    case GET -> Root / "users" / IntVar(userId) as user =>
+    case GET -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
       for {
         result <- userService.findUser(userId)
         response <- result.fold(NotFound())(value => Ok(value))
       } yield response
-    case DELETE -> Root / "users" / IntVar(userId) as user =>
+    case DELETE -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
       for {
         result <- userService.deleteUser(userId)
         response <- result.fold(_ => NotFound(), _ => NoContent())
       } yield response
-    case req @ PUT -> Root / "users" / IntVar(userId) as user =>
+    case req @ PUT -> Root / "users" / IntVar(userId) as user if (user.enabled) =>
       for {
         json <- req.req.decodeJson[UpdateUserRequest]
         validated = UpdateUserValidation(json)
