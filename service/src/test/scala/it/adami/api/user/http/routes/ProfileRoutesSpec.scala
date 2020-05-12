@@ -9,10 +9,10 @@ import org.mockito.ArgumentMatchersSugar
 import org.http4s.implicits._
 import org.http4s.dsl.io._
 
-class AccountRoutesSpec extends SpecBase with MockitoSugar with ArgumentMatchersSugar {
+class ProfileRoutesSpec extends SpecBase with MockitoSugar with ArgumentMatchersSugar {
 
   private val userService = mock[UserService]
-  private val accountRoutes = new AccountRoutes(userService, mockAuthMiddleWare).routes.orNotFound
+  private val accountRoutes = new ProfileRoutes(userService, mockAuthMiddleWare).routes.orNotFound
 
   "AccountRoutes" when {
     "POST /profile/activate is called" should {

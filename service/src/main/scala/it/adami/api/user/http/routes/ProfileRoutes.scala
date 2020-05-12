@@ -10,7 +10,7 @@ import org.http4s.dsl.io._
 /**
   * Contains all the routes for the profile management(activation, change password, ecc..)
   */
-class AccountRoutes(userService: UserService, authMiddleware: AuthMiddleware[IO, UserInfo]) extends BaseRoutes {
+class ProfileRoutes(userService: UserService, authMiddleware: AuthMiddleware[IO, UserInfo]) extends BaseRoutes {
 
   private val authedRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
     case POST -> Root / "profile" / "activate" as user =>

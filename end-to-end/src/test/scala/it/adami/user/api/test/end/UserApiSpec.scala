@@ -13,13 +13,13 @@ class UserApiSpec extends SpecBase {
   "UserApi" when {
     s"GET /api/$apiVersion/users/{id} is called" should {
       "return Ok with the JSON detail if the user exist" in {
-        val (location, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
         val getReq: Request[IO] = Request(uri = Uri.unsafeFromString(location)).withHeaders(headers)
 
         client.status(getReq).map(_.code shouldBe 200).unsafeToFuture
       }
       "return NotFound if the user with the specified id doesn't exist" in {
-        val (_, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (_, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
         val req: Request[IO] =
           Request(uri = Uri.unsafeFromString(getUserApiPath(notExistingId))).withHeaders(headers)
 
@@ -29,7 +29,7 @@ class UserApiSpec extends SpecBase {
 
     s"DELETE /api/$apiVersion/users/{id} is called" should {
       "return NoContent if the user exist" in {
-        val (location, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
         val id = location.substring(location.lastIndexOf("/") + 1).toInt
 
         val deleteReq: Request[IO] =
@@ -39,7 +39,7 @@ class UserApiSpec extends SpecBase {
       }
 
       "return NotFound if the user doesn't exist" in {
-        val (_, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (_, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
 
         val deleteReq: Request[IO] =
           Request(uri = Uri.unsafeFromString(getDeleteApiPath(notExistingId)), method = DELETE)
@@ -51,7 +51,7 @@ class UserApiSpec extends SpecBase {
     s"PUT /api/$apiVersion/users/{id} is called" should {
 
       "return NoContent if the user exist" in {
-        val (location, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
         val id = location.substring(location.lastIndexOf("/") + 1).toInt
 
         val updateReq: Request[IO] =
@@ -62,7 +62,7 @@ class UserApiSpec extends SpecBase {
       }
 
       "return NotFound if the user doesn't exist" in {
-        val (location, headers) = registerUser(JsonBuilder.createRequestJson)
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
 
         val updateReq: Request[IO] =
           Request(uri = Uri.unsafeFromString(getUpdateApiPath(notExistingId)), method = PUT)
