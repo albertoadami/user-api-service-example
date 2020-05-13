@@ -45,12 +45,12 @@ class UserServiceSpec extends SpecBase with EitherValues {
           userService
             .createUser(UserDataGenerator.generateCreateUserRequest)
             .unsafeRunSync
-        result.right.value shouldBe 2
+        result.right.value shouldBe 1
       }
 
       "return an error if the email is already in use" in {
         val result =
-          userService
+          errorUserService
             .createUser(UserDataGenerator.generateCreateUserRequest)
             .unsafeRunSync
         result.left.value shouldBe UserNameAlreadyInUse
@@ -99,7 +99,7 @@ class UserServiceSpec extends SpecBase with EitherValues {
           userService
             .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
             .unsafeRunSync
-        result.isLeft shouldBe true
+        result.isRight shouldBe true
       }
 
       "return UserNotFound if the id doesn't exist" in {
