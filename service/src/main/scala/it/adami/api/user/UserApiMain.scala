@@ -7,7 +7,7 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import it.adami.api.user.http.routes.{HealthRoutes, ProfileRoutes, SignUpRoutes, UserRoutes, VersionRoutes}
 import com.typesafe.scalalogging.LazyLogging
 import it.adami.api.user.config.AppConfig
-import it.adami.api.user.services.{UserService, VersionService}
+import it.adami.api.user.services.{ProfileService, UserService, VersionService}
 import cats.effect.IO
 import it.adami.api.user.database.DatabaseManager
 import it.adami.api.user.http.RoutesBuilder
@@ -37,6 +37,7 @@ object UserApiMain extends IOApp with LazyLogging {
 
         val userService = new UserService(userRepository)
         val versionService = new VersionService
+        val profileService = new ProfileService(userRepository)
 
         val middleware: AuthMiddleware[IO, UserInfo] = authentication.middleware
 
@@ -44,7 +45,7 @@ object UserApiMain extends IOApp with LazyLogging {
           new VersionRoutes(versionService),
           new SignUpRoutes(userService, serviceConfig),
           new UserRoutes(userService, middleware),
-          new ProfileRoutes(userService, middleware)
+          new ProfileRoutes(profileService, middleware)
         )
 
         val routesBuilder = new RoutesBuilder(routes, new HealthRoutes, serviceConfig)
