@@ -40,7 +40,7 @@ class ProfileApiSpec extends SpecBase {
         val req = Request[IO](method = PUT, uri = Uri.unsafeFromString(changePasswordApiPath)).withHeaders(headers).withEntity(changePwdJson)
         client
           .status(req)
-          .map(_.code shouldBe 404)
+          .map(_.code shouldBe 400)
           .unsafeToFuture
       }
     }
