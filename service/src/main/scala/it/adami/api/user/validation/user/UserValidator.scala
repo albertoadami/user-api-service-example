@@ -32,7 +32,7 @@ trait UserValidator {
     if (StringUtils.isValidEmail(email)) email.validNec else InvalidEmail.invalidNec
 
   def validatePassword(password: String): ValidationResult[String] =
-    if (checkIfStringIsEmpty(password) & password.length >= 8) InvalidPassword.invalidNec
+    if (password.length < 8) InvalidPassword.invalidNec
     else password.validNec
 
 }

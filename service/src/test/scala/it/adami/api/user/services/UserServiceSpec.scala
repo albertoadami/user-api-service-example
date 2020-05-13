@@ -35,81 +35,79 @@ class UserServiceSpec extends SpecBase with EitherValues {
     override def findUserByEmail(email: String): IO[Option[User]] = IO.pure(None)
   }
 
-  val userService = new UserService(userRepository)
-  val errorUserService = new UserService(errorUserRepository)
+  private val userService = new UserService(userRepository)
+  private val errorUserService = new UserService(errorUserRepository)
 
   "UserService" when {
     "createUser() is called" should {
       "return the generated userId if the email is not in use" in {
-        userService
-          .createUser(UserDataGenerator.generateCreateUserRequest)
-          .map { value => value.right.value shouldBe 1 }
-          .unsafeToFuture
-
+        val result =
+          userService
+            .createUser(UserDataGenerator.generateCreateUserRequest)
+            .unsafeRunSync
+        result.right.value shouldBe 1
       }
 
       "return an error if the email is already in use" in {
-        userService
-          .createUser(UserDataGenerator.generateCreateUserRequest)
-          .map { value => value.left.value shouldBe UserNameAlreadyInUse }
-          .unsafeToFuture
+        val result =
+          errorUserService
+            .createUser(UserDataGenerator.generateCreateUserRequest)
+            .unsafeRunSync
+        result.left.value shouldBe UserNameAlreadyInUse
       }
 
     }
 
     "findUser() is called" should {
       "return the user information for an existing id" in {
-        userService
-          .findUser(999)
-          .map(_.isDefined shouldBe true)
-          .unsafeToFuture
+        val result =
+          userService
+            .findUser(999)
+            .unsafeRunSync
+        result.isDefined shouldBe true
       }
 
       "return None if the id is invalid" in {
-        errorUserService
-          .findUser(9999)
-          .map(_.isEmpty shouldBe true)
-          .unsafeToFuture
+        val result =
+          errorUserService
+            .findUser(9999)
+            .unsafeRunSync
+        result.isEmpty shouldBe true
       }
     }
 
     "deleteUser() is called" should {
       "return unit if the id exists" in {
-        userService
-          .deleteUser(999)
-          .map(_.isRight shouldBe true)
-          .unsafeToFuture
+        val result =
+          userService
+            .deleteUser(999)
+            .unsafeRunSync
+        result.isRight shouldBe true
       }
       "return UserNotFound if the id doesn't exist" in {
-        errorUserService
-          .deleteUser(999)
-          .map(value => value.left.value shouldBe UserNotFound)
-          .unsafeToFuture
+        val result =
+          errorUserService
+            .deleteUser(999)
+            .unsafeRunSync
+        result.left.value shouldBe UserNotFound
       }
     }
 
     "updateUser() is called" should {
       "return Unit if update go right" in {
-        userService
-          .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
-          .map(value => value.isLeft shouldBe true)
-          .unsafeToFuture
+        val result =
+          userService
+            .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
+            .unsafeRunSync
+        result.isRight shouldBe true
       }
 
       "return UserNotFound if the id doesn't exist" in {
-        errorUserService
-          .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
-          .map(value => value.left.value shouldBe UserNotFound)
-          .unsafeToFuture
-      }
-    }
-
-    "activateUser() is called" should {
-      "return Unit" in {
-        userService
-          .activateUser(999)
-          .map(_ => 1 shouldBe 1)
-          .unsafeToFuture
+        val result =
+          errorUserService
+            .updateUser(999, UserDataGenerator.generateUpdateUserRequest)
+            .unsafeRunSync
+        result.left.value shouldBe UserNotFound
       }
     }
 

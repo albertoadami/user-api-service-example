@@ -28,6 +28,7 @@ trait UserApiContainer extends PostgresContainer {
   lazy val versionApiPath: String = s"$basePath/version"
   lazy val createUserApiPath: String = s"$basePath/signUp"
   lazy val activateUserApiPath: String = s"$basePath/profile/activate"
+  lazy val changePasswordApiPath: String = s"$basePath/profile/password"
   def getUserApiPath(userId: Int): String = s"$basePath/users/$userId"
   def getDeleteApiPath(userId: Int): String = s"$basePath/users/$userId"
   def getUpdateApiPath(userId: Int): String = s"$basePath/users/$userId"
