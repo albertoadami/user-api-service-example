@@ -15,6 +15,7 @@ class ProfileRoutes(userService: UserService, authMiddleware: AuthMiddleware[IO,
   private val authedRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
     case POST -> Root / "profile" / "activate" as user =>
       userService.activateUser(user.id).flatMap(_ => NoContent())
+
   }
 
   override def routes: HttpRoutes[IO] = authMiddleware(authedRoutes)
