@@ -2,7 +2,6 @@ package it.adami.api.user.services
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
-
 import cats.effect.IO
 import com.typesafe.scalalogging.LazyLogging
 import it.adami.api.user.errors.{CreateUserError, GenericError, UserNameAlreadyInUse, UserNotFound}
@@ -54,18 +53,6 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
       case None =>
         logger.info(s"Not found user with id $id")
         IO(Left(UserNotFound))
-    }
-
-  def activateUser(id: Int): IO[Unit] =
-    userRepository.findUser(id) flatMap {
-      case Some(user) =>
-        val updatedUser = user.copy(
-          enabled = true,
-          lastUpdatedDate = Some(Timestamp.valueOf(LocalDateTime.now()))
-        )
-        userRepository
-          .updateUser(id, updatedUser)
-          .map(_ => Right())
     }
 
 }

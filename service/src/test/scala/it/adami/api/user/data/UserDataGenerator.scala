@@ -1,7 +1,6 @@
 package it.adami.api.user.data
 
 import java.sql.Timestamp
-import java.util.Date
 
 import it.adami.api.user.domain.User
 import it.adami.api.user.http.json.{CreateUserRequest, UpdateUserRequest, UserDetailResponse}
@@ -16,7 +15,7 @@ object UserDataGenerator {
       firstname = Random.nextString(5),
       lastname = Random.nextString(5),
       email = "test@mail.com",
-      password = Random.nextString(5),
+      password = Random.nextString(9),
       dateOfBirth = "07-09-1990",
       gender = "MALE"
     )
@@ -26,7 +25,7 @@ object UserDataGenerator {
       firstname = Random.nextString(5),
       lastname = Random.nextString(5),
       email = Random.nextString(5),
-      password = Random.nextString(5),
+      password = s"password-${Random.nextInt(6)}",
       dateOfBirth = StringUtils.getDateFromString("07-07-2007"),
       gender = "MALE",
       creationDate = new Timestamp(System.currentTimeMillis()),
