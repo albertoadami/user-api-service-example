@@ -13,10 +13,11 @@ import io.circe.generic.auto._
 import org.http4s.circe.CirceEntityEncoder._
 
 trait SpecBase extends AnyWordSpec with Matchers {
+  protected val UserId = 1
   def mockAuthMiddleWare: AuthMiddleware[IO, UserInfo] = {
     val onFailure: AuthedRoutes[ErrorsResponse, IO] = Kleisli { req => OptionT.liftF(Forbidden(req.context)) }
     val authUser: Kleisli[IO, Request[IO], Either[ErrorsResponse, UserInfo]] = Kleisli({ _ =>
-      IO.pure(Right(UserInfo(1, "test@test.it", enabled = true)))
+      IO.pure(Right(UserInfo(UserId, enabled = true)))
     })
     AuthMiddleware(authUser, onFailure)
   }
