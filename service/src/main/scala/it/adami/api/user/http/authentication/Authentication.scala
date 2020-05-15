@@ -49,5 +49,6 @@ trait Authentication extends LazyLogging {
 }
 
 object Authentication {
-  def basic(userRepository: UserRepository): Authentication = new BasicAuthentication(userRepository)
+  def basic(userRepository: UserRepository): AuthMiddleware[IO, UserInfo] =
+    new BasicAuthentication(userRepository).middleware
 }

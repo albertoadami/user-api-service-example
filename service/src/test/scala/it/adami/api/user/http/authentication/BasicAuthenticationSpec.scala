@@ -33,7 +33,7 @@ class BasicAuthenticationSpec extends SpecBase {
       NoContent()
   }
 
-  private val authTestRoutes = authentication.middleware(simpleTestRoutes).orNotFound
+  private val authTestRoutes = authentication(simpleTestRoutes).orNotFound
 
   "BasicAuthentication" should {
     "return Forbidden when the Authorization header is not provided" in {
