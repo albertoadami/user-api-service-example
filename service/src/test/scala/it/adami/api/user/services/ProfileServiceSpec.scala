@@ -28,6 +28,22 @@ class ProfileServiceSpec extends SpecBase with OptionValues {
   private val profileService = new ProfileService(userRepository)
 
   "ProfileService" when {
+    "getProfile() is called" should {
+      "return the info of the logged user" in {
+        val result = profileService
+          .getProfile(999)
+          .unsafeRunSync
+
+        result.id shouldBe testUser.id.get
+        result.firstname shouldBe testUser.firstname
+        result.lastname shouldBe testUser.lastname
+        result.email shouldBe testUser.email
+        result.gender shouldBe testUser.gender
+        result.enabled shouldBe testUser.enabled
+
+      }
+    }
+
     "activateUser() is called" should {
       "return Unit" in {
         profileService

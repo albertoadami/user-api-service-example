@@ -30,7 +30,7 @@ class ProfileRoutes(profileService: ProfileService, authMiddleware: AuthMiddlewa
 
   private val authedRoutes: AuthedRoutes[UserInfo, IO] = AuthedRoutes.of {
     case GET -> Root / "profile" as user =>
-    profileService.getProfile
+      profileService.getProfile(user.id).flatMap(Ok(_))
     case POST -> Root / "profile" / "activate" as user =>
       profileService.activateUser(user.id).flatMap(_ => NoContent())
     case req @ PUT -> Root / "profile" / "password" as user =>
