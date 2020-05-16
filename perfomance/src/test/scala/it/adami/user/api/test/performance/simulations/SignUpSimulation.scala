@@ -13,9 +13,11 @@ class SignUpSimulation extends Simulation with BasicSimulation {
   }
 
   override protected def mainScenario: PopulationBuilder =
-    scenario(
-      this.getClass.getCanonicalName
-    ).exitBlockOnFail(init())
+    scenario(this.getClass.getCanonicalName)
+      .exitBlockOnFail(init())
+      .exec {
+        userApiCalls.activate(SimulationUserImpl)
+      }
       .inject(configureRampUp)
 
   defaultSetUp()

@@ -6,11 +6,13 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import it.adami.user.api.test.performance.data.SimulationUser
+import it.adami.user.api.test.performance.util.StringUtil
 
 class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLogging {
 
   lazy val getVersionUrl: String = userApiServiceConfig.version
   lazy val signUpUrl: String = userApiServiceConfig.signUp
+  lazy val activateUrl: String = userApiServiceConfig.activate
 
   val versionInfo: ChainBuilder = {
     exec {
@@ -37,6 +39,16 @@ class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLoggi
         )
       })
       .check(status.is(201))
+  }
+
+  def activate(user: SimulationUser): HttpRequestBuilder = {
+    http("Activate profile")
+      .post(activateUrl)
+      .basicAuth(
+        username = "${emailKey}",
+        password = "${passwordKey}"
+      )
+      .check(status is(204))
   }
 
 }
