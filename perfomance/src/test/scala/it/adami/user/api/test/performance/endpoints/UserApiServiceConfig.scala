@@ -11,5 +11,6 @@ class UserApiServiceConfig(config: Config) {
   lazy val version: String = endpoints.getString("version")
   lazy val signUp: String = endpoints.getString("sign-up")
   lazy val activate: String = endpoints.getString("activate")
+  lazy val profile: String = endpoints.getString("profile")
 
 }

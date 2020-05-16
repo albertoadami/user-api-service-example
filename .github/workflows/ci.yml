@@ -27,3 +27,7 @@ jobs:
       run: sbt 'project service; set coverageEnabled := false; docker:publishLocal'
     - name: Run end-to-end Test
       run:  sbt 'project end-to-end; test'
+    - name: Run dockerCompose
+      run: sbt 'project performance; dockerComposeUp'
+    - name: Run performance test
+      run: sbt 'project performance; gatling:test'

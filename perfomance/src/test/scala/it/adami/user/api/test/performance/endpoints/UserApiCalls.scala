@@ -13,6 +13,7 @@ class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLoggi
   lazy val getVersionUrl: String = userApiServiceConfig.version
   lazy val signUpUrl: String = userApiServiceConfig.signUp
   lazy val activateUrl: String = userApiServiceConfig.activate
+  lazy val profileUrl: String = userApiServiceConfig.profile
 
   val versionInfo: ChainBuilder = {
     exec {
@@ -49,6 +50,17 @@ class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLoggi
         password = "${passwordKey}"
       )
       .check(status is(204))
+  }
+
+  def profile(user: SimulationUser): HttpRequestBuilder = {
+    http("Get profile info")
+      .get(profileUrl)
+      .basicAuth(
+        username = "${emailKey}",
+        password = "${passwordKey}"
+      )
+      .check(status is(200))
+
   }
 
 }

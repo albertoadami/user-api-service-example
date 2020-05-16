@@ -10,13 +10,19 @@ class SignUpSimulation extends Simulation with BasicSimulation {
   private def init(): ChainBuilder = {
     feed(TestFeeder.generateUser(SimulationUserImpl))
       .exec(userApiCalls.signUp(SimulationUserImpl))
+      .exec(userApiCalls.activate(SimulationUserImpl))
   }
 
   override protected def mainScenario: PopulationBuilder =
     scenario(this.getClass.getCanonicalName)
       .exitBlockOnFail(init())
-      .exec {
-        userApiCalls.activate(SimulationUserImpl)
+      .exitHereIfFailed
+      .during(duration seconds, "i") {
+        exec {
+          pace(defaultPace)
+        }.exec {
+          userApiCalls.profile(SimulationUserImpl)
+        }
       }
       .inject(configureRampUp)
 
