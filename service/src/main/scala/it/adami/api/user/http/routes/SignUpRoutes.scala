@@ -36,7 +36,10 @@ class SignUpRoutes(userService: UserService, serviceConfig: ServiceConfig) exten
         json <- req.decodeJson[CreateUserRequest]
         validated = CreateUserValidation(json)
         response <- validated.fold(
-          errors => BadRequest(getErrorsResponse(errors)),
+          errors => {
+            logger.error(s"Founded errors $errors for request with json $json")
+            BadRequest(getErrorsResponse(errors))
+          },
           valid => handleCreateUserResponses(valid)
         )
       } yield response

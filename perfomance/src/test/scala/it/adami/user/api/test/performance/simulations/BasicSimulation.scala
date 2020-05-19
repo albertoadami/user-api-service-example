@@ -15,21 +15,25 @@ import scala.util.Random
 
 trait BasicSimulation extends Simulation {
 
-  def defaultPace: Expression[FiniteDuration] = {
-    (3000 + Random.nextInt(4000)) millis
+  def randomPace: Expression[FiniteDuration] = {
+    (3000 + Random.nextInt(5000)).millis
   }
 
-  val duration = java.lang.Long.getLong("duration", 120)
 
 
   private val config = ConfigFactory.load()
   private val userApiServiceConfig = new UserApiServiceConfig(config)
   protected val userApiCalls = new UserApiCalls(userApiServiceConfig)
 
-  private val users = config.getConfig("simulation").getInt("users")
+  private val simulationConfig = config.getConfig("simulation")
+
+  private val users = simulationConfig.getInt("users")
+  protected val duration = simulationConfig.getInt("duration")
+  private val rampUp = simulationConfig.getInt("rampUp")
+
 
   protected val configureRampUp: RampOpenInjection =
-    rampUsers(users) during 4.minute
+    rampUsers(users) during rampUp.minute
 
   private lazy val versionScenario =
     scenario("VersionInfoScenario").exec {
