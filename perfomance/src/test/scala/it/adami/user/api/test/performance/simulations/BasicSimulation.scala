@@ -19,8 +19,6 @@ trait BasicSimulation extends Simulation {
     (3000 + Random.nextInt(5000)).millis
   }
 
-
-
   private val config = ConfigFactory.load()
   private val userApiServiceConfig = new UserApiServiceConfig(config)
   protected val userApiCalls = new UserApiCalls(userApiServiceConfig)
@@ -30,7 +28,6 @@ trait BasicSimulation extends Simulation {
   private val users = simulationConfig.getInt("users")
   protected val duration = simulationConfig.getInt("duration")
   private val rampUp = simulationConfig.getInt("rampUp")
-
 
   protected val configureRampUp: RampOpenInjection =
     rampUsers(users) during rampUp.minute

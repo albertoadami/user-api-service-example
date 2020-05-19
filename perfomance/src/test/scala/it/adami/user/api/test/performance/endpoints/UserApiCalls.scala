@@ -49,7 +49,7 @@ class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLoggi
         username = "${emailKey}",
         password = "${passwordKey}"
       )
-      .check(status is(204))
+      .check(status is (204))
   }
 
   def profile(user: SimulationUser): HttpRequestBuilder = {
@@ -59,7 +59,7 @@ class UserApiCalls(userApiServiceConfig: UserApiServiceConfig) extends LazyLoggi
         username = "${emailKey}",
         password = "${passwordKey}"
       )
-      .check(status is(200))
+      .check(status is (200))
 
   }
 

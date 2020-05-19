@@ -13,6 +13,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
       POSTGRES_URL: jdbc:postgresql://postgres:5432/users
+      SERVICE_THREADS: 50
     depends_on:
       - postgres
     ports:
