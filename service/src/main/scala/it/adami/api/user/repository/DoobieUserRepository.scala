@@ -82,7 +82,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
          SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
          FROM users u
          WHERE u.enabled = TRUE AND u.id <> $user AND
-               (u.firstname LIKE $search OR u.lastname LIKE $search)
+               (u.firstname LIKE '%' || $search || '%' OR u.lastname LIKE '%' ||$search || '%')
        """.stripMargin
       .query[User]
       .to[Seq]
