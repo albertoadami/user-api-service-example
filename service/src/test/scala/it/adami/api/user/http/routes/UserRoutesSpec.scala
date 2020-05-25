@@ -73,7 +73,22 @@ class UserRoutesSpec
 
         response.status shouldBe Ok
 
-        val hcursor = response.as[Json].unsafeRunSync.hcursor
+        val json = response.as[Json].unsafeRunSync.hcursor.as[SearchUsersResponse].right.get
+        json.items shouldBe Seq(searchUsersResponse)
+
+      }
+      "return Ok with empty list when the query doesn't match with any user" in {
+        val query = Random.nextString(5)
+        when(userService.searchUsers(anyInt, any[String]))
+          .thenReturn(IO.pure(SearchUsersResponse(Seq())))
+        val response = userRoutes
+          .run(Request(uri = Uri.unsafeFromString("/users?search=$query")))
+          .unsafeRunSync()
+
+        response.status shouldBe Ok
+
+        val json = response.as[Json].unsafeRunSync.hcursor.as[SearchUsersResponse].right.get
+        json.items.isEmpty shouldBe true
 
       }
     }

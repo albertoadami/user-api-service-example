@@ -1,12 +1,22 @@
 package it.adami.user.api.test.end
 
 import cats.effect.IO
+import io.circe.Json
+import it.adami.api.user.http.json.SearchUsersResponse
 import it.adami.user.api.test.end.common.JsonBuilder
 import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
+import io.circe.generic.auto._
 
 class UserApiSpec extends SpecBase {
+
+  private case class SearchUserItem(
+      id: Int,
+      firstname: String,
+      lastname: String,
+      email: String
+  )
 
   val notExistingId = 99999 //id that I know doesn't exist
 
@@ -69,6 +79,23 @@ class UserApiSpec extends SpecBase {
             .withHeaders(headers)
             .withEntity(JsonBuilder.updateRequestJson)
         client.status(updateReq).map(_.code shouldBe 404).unsafeToFuture
+      }
+    }
+
+    s"GET /api/$apiVersion/users?search={query} is called" should {
+      "return Ok with empty results if no user is found" in {
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
+
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath("invalid_search_query")), method = POST)
+          .withHeaders(headers)
+
+        client
+          .fetch(req) { response =>
+            val json = response.as[Json].unsafeRunSync().hcursor.as[SearchUsersResponse].right.get
+            IO(json.items.isEmpty shouldBe true)
+          }
+          .unsafeToFuture()
+
       }
     }
 

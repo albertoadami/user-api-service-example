@@ -33,5 +33,6 @@ trait UserApiContainer extends PostgresContainer {
   def getUserApiPath(userId: Int): String = s"$basePath/users/$userId"
   def getDeleteApiPath(userId: Int): String = s"$basePath/users/$userId"
   def getUpdateApiPath(userId: Int): String = s"$basePath/users/$userId"
+  def searchUsersApiPath(search: String): String = s"$basePath/users?search=$search"
 
 }
