@@ -54,6 +54,17 @@ lazy val `end-to-end` = (project in file("end-to-end"))
   .settings(commonSettings: _*)
   .settings(buildInfoSettings: _*)
 
+lazy val performance = (project in file("perfomance"))
+  .enablePlugins(BuildInfoPlugin, GatlingPlugin, DockerComposePlugin)
+  .settings(
+    name := "performance",
+    dockerImageCreationTask := (publishLocal in Docker).value,
+      libraryDependencies ++=
+        loggingDependencies ++
+        performanceDependencies
+  )
+  .settings(commonSettings: _*)
+  .settings(buildInfoSettings: _*)
 
 lazy val `user-api` = (project in file("."))
   .aggregate(service)
