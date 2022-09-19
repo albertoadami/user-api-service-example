@@ -22,10 +22,10 @@ jobs:
     - name: Test
       run: sbt test
     - name: Build docker image
-      run: sbt 'project service; set coverageEnabled := false; docker:publishLocal'
+      run: sbt 'service/docker:publishLocal'
     - name: Run end-to-end Test
-      run:  sbt 'project end-to-end; test'
+      run:  sbt 'end-to-end/test'
     - name: Run dockerCompose
-      run: sbt 'project performance; dockerComposeUp'
+      run: sbt 'performance/dockerComposeUp'
     - name: Run performance test
-      run: sbt 'project performance; gatling:test'
+      run: sbt 'performance/gatling:test'
