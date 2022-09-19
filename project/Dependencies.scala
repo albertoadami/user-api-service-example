@@ -35,11 +35,13 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % "3.2.13" % Test
   )
 
+  val scalatestVersion = "3.2.13"
+  val testContainerScalaVersion = "0.36.1"
   lazy val testDependencies = Seq(
-    "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % IntegrationTest,
-    "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.36.1" % IntegrationTest,
-    "org.scalatest" %% "scalatest" % "3.2.13" % Test,
-    "org.scalatest" %% "scalatest" % "3.2.13" % IntegrationTest,
+    "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainerScalaVersion % IntegrationTest,
+    "com.dimafeng" %% "testcontainers-scala-postgresql" % testContainerScalaVersion % IntegrationTest,
+    "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+    "org.scalatest" %% "scalatest" % scalatestVersion % IntegrationTest,
     "org.mockito" %% "mockito-scala" % "1.17.12" % Test,
     "org.tpolecat" %% "doobie-scalatest" % doobieVersion % IntegrationTest
   )
