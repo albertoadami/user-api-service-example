@@ -38,7 +38,6 @@ lazy val `end-to-end` = (project in file("end-to-end"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "end-to-end",
-    scalacOptions += "-Ypartial-unification",
     libraryDependencies ++=
       http4sDependencies ++
         circeDependencies ++
