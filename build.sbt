@@ -19,7 +19,6 @@ lazy val service = (project in file("service"))
   .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
   .settings(
     name := "user-api",
-    coverageExcludedPackages := ".*user;.*user.config",
     libraryDependencies ++=
       http4sDependencies ++
         loggingDependencies ++
@@ -32,7 +31,6 @@ lazy val service = (project in file("service"))
     Defaults.itSettings
   )
   .settings(commonSettings: _*)
-  .settings(CoverageSettings.settings: _*)
   .settings(DockerSettings.settings: _*)
   .settings(buildInfoSettings: _*)
 

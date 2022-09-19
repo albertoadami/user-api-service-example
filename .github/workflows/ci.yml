@@ -20,9 +20,7 @@ jobs:
     - name: Compile
       run: sbt clean compile
     - name: Test
-      run: sbt coverage test
-    - name: Check coverage
-      run: sbt coverageReport
+      run: sbt test
     - name: Build docker image
       run: sbt 'project service; set coverageEnabled := false; docker:publishLocal'
     - name: Run end-to-end Test
