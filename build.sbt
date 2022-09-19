@@ -2,13 +2,7 @@ import Dependencies._
 
 val commonSettings = Seq(
   organization := "it.adami",
-  scalaVersion := "2.12.6",
-  unusedCompileDependenciesFilter -=
-    moduleFilter("org.slf4j", "log4j-over-slf4j"),
-  unusedCompileDependenciesFilter -=
-    moduleFilter("ch.qos.logback", "logback-classic"),
-  unusedCompileDependenciesFilter -=
-    moduleFilter("org.tpolecat", "doobie-postgres")
+  scalaVersion := "2.12.6"
 )
 
 val buildInfoSettings = Seq(
