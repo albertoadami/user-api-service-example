@@ -24,6 +24,6 @@ jobs:
     - name: Run end-to-end Test
       run:  sbt 'end-to-end/test'
     - name: Run dockerCompose
-      run: sbt 'performance/dockerComposeUp'
+      run: sbt 'project performance; dockerComposeUp'
     - name: Run performance test
-      run: sbt 'performance/gatling:test'
+      run: sbt 'project performance; gatling:test'
