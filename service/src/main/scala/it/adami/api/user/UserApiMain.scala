@@ -33,13 +33,11 @@ object UserApiMain extends IOApp with LazyLogging {
       DatabaseManager.generateTransactor(postgresConfig)(contextShift, executionContext).use { xa =>
         val userRepository = UserRepository(xa)
 
-        val authentication = Authentication.basic(userRepository)
+        val middleware: AuthMiddleware[IO, UserInfo] = Authentication.basic(userRepository)
 
         val userService = new UserService(userRepository)
         val versionService = new VersionService
         val profileService = new ProfileService(userRepository)
-
-        val middleware: AuthMiddleware[IO, UserInfo] = authentication.middleware
 
         val routes = Seq(
           new VersionRoutes(versionService),
