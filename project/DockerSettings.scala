@@ -5,13 +5,12 @@ import com.typesafe.sbt.packager.linux.LinuxKeys
 import _root_.sbt._
 import _root_.sbt.Keys._
 
-
-object DockerSettings extends  LinuxKeys {
+object DockerSettings extends LinuxKeys {
 
   lazy val settings: Seq[Def.Setting[_]] = Seq(
     dockerBaseImage := "openjdk:8-slim",
     daemonUserUid in Docker := None,
-    daemonUser in Docker    := "daemon",
+    daemonUser in Docker := "daemon",
     dockerExposedPorts := Seq(8080)
   )
 }

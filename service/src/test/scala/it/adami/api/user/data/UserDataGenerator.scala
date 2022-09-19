@@ -22,8 +22,8 @@ object UserDataGenerator {
 
   def generateUser: User =
     User(
-      firstname = Random.nextString(5),
-      lastname = Random.nextString(5),
+      firstName = Random.nextString(5),
+      lastName = Random.nextString(5),
       email = Random.nextString(5),
       password = s"password-${Random.nextInt(6)}",
       dateOfBirth = StringUtils.getDateFromString("07-07-2007"),
