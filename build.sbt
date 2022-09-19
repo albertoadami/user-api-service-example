@@ -19,11 +19,13 @@ lazy val service = (project in file("service"))
   .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
   .settings(
     name := "user-api",
+    scalacOptions += "-Ypartial-unification",
     libraryDependencies ++=
       http4sDependencies ++
         loggingDependencies ++
         circeDependencies ++
         databaseDependencies ++
+        catsDependencies ++
         testDependencies
   )
   .configs(IntegrationTest)
@@ -38,6 +40,7 @@ lazy val `end-to-end` = (project in file("end-to-end"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "end-to-end",
+    scalacOptions += "-Ypartial-unification",
     libraryDependencies ++=
       http4sDependencies ++
         circeDependencies ++
