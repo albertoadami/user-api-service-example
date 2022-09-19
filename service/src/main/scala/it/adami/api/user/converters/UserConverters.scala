@@ -11,8 +11,8 @@ object UserConverters {
 
   implicit def convertToUser(req: CreateUserRequest): User =
     User(
-      firstname = req.firstname,
-      lastname = req.lastname,
+      firstName = req.firstname,
+      lastName = req.lastname,
       email = req.email,
       password = req.password,
       dateOfBirth = StringUtils.getDateFromString(req.dateOfBirth),
@@ -23,8 +23,8 @@ object UserConverters {
 
   implicit def convertToUserDetail(user: User): UserDetailResponse =
     UserDetailResponse(
-      firstname = user.firstname,
-      lastname = user.lastname,
+      firstname = user.firstName,
+      lastname = user.lastName,
       email = user.email,
       dateOfBirth = user.dateOfBirth.toString,
       gender = user.gender,
@@ -34,8 +34,8 @@ object UserConverters {
   implicit def convertToUserProfile(user: User): UserProfileResponse =
     UserProfileResponse(
       id = user.id.get,
-      firstname = user.firstname,
-      lastname = user.lastname,
+      firstname = user.firstName,
+      lastname = user.lastName,
       email = user.email,
       dateOfBirth = user.dateOfBirth.toString,
       gender = user.gender,

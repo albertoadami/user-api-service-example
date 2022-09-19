@@ -12,7 +12,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
     val insertQuery =
       sql"""
            INSERT INTO users(firstname, lastname, email, password, birthday_date, gender, creation_date, enabled)
-           VALUES(${user.firstname}, ${user.lastname}, ${user.email}, ${user.password}, ${user.dateOfBirth}, ${user.gender}, ${user.creationDate}, ${user.enabled})
+           VALUES(${user.firstName}, ${user.lastName}, ${user.email}, ${user.password}, ${user.dateOfBirth}, ${user.gender}, ${user.creationDate}, ${user.enabled})
            """.update
         .withUniqueGeneratedKeys[Int]("id")
         .transact(xa)
@@ -57,8 +57,8 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
   override def updateUser(id: Int, user: User): IO[Unit] =
     sql"""
          UPDATE users
-         SET firstname = ${user.firstname},
-             lastname = ${user.lastname},
+         SET firstname = ${user.firstName},
+             lastname = ${user.lastName},
              gender = ${user.gender},
              birthday_date = ${user.dateOfBirth},
              enabled = ${user.enabled}

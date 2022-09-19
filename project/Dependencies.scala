@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val http4sVersion = "0.21.4"
+  val http4sVersion = "0.21.33"
   lazy val http4sDependencies = Seq(
     "org.http4s" %% "http4s-dsl" % http4sVersion,
     "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -11,16 +11,16 @@ object Dependencies {
 
   lazy val loggingDependencies = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-    "org.slf4j" % "log4j-over-slf4j" % "1.7.30",
-    "ch.qos.logback" % "logback-classic" % "1.2.3"
+    "org.slf4j" % "log4j-over-slf4j" % "2.0.1",
+    "ch.qos.logback" % "logback-classic" % "1.2.11"
   )
 
   lazy val circeDependencies = Seq(
-    "io.circe" %% "circe-config" % "0.7.0",
-    "io.circe"   %% "circe-generic" % "0.13.0"
+    "io.circe" %% "circe-config" % "0.8.0",
+    "io.circe"   %% "circe-generic" % "0.14.3"
   )
 
-  val doobieVersion = "0.8.8"
+  val doobieVersion = "0.13.4"
   val databaseDependencies = Seq(
     "org.tpolecat" %% "doobie-core"      % doobieVersion,
     "org.tpolecat"          %% "doobie-hikari"          % doobieVersion,
@@ -33,18 +33,18 @@ object Dependencies {
   )
 
   lazy val endToEndDependencies = Seq(
-    "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % Test,
-    "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.36.1" % Test,
+    "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.10" % Test,
+    "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.40.10" % Test,
     "org.http4s" %% "http4s-blaze-client" % http4sVersion % Test,
-    "org.scalatest" %% "scalatest" % "3.1.1" % Test
+    "org.scalatest" %% "scalatest" % "3.2.13" % Test
   )
 
   lazy val testDependencies = Seq(
     "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.36.1" % IntegrationTest,
     "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.36.1" % IntegrationTest,
-    "org.scalatest" %% "scalatest" % "3.1.1" % Test,
-    "org.scalatest" %% "scalatest" % "3.1.1" % IntegrationTest,
-    "org.mockito" %% "mockito-scala" % "1.14.0" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.13" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.13" % IntegrationTest,
+    "org.mockito" %% "mockito-scala" % "1.17.12" % Test,
     "org.tpolecat" %% "doobie-scalatest" % doobieVersion % IntegrationTest
   )
 

@@ -40,8 +40,8 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
       case Some(user) =>
         val updatedUser = user
           .copy(
-            firstname = updateUserRequest.firstname,
-            lastname = updateUserRequest.lastname,
+            firstName = updateUserRequest.firstname,
+            lastName = updateUserRequest.lastname,
             gender = updateUserRequest.gender,
             dateOfBirth = StringUtils.getDateFromString(updateUserRequest.dateOfBirth),
             lastUpdatedDate = Some(Timestamp.valueOf(LocalDateTime.now()))

@@ -35,8 +35,8 @@ class ProfileServiceSpec extends SpecBase with OptionValues {
           .unsafeRunSync
 
         result.id shouldBe testUser.id.get
-        result.firstname shouldBe testUser.firstname
-        result.lastname shouldBe testUser.lastname
+        result.firstname shouldBe testUser.firstName
+        result.lastname shouldBe testUser.lastName
         result.email shouldBe testUser.email
         result.gender shouldBe testUser.gender
         result.enabled shouldBe testUser.enabled

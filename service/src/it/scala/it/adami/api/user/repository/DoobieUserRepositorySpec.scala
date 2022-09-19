@@ -16,8 +16,8 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
 
   private def generateUser = User(
     id = None,
-    firstname = Random.nextString(5),
-    lastname = Random.nextString(5),
+    firstName = Random.nextString(5),
+    lastName = Random.nextString(5),
     email = s"${Random.nextString(5)}@test.com",
     password = Random.nextString(5),
     dateOfBirth = new Date(1990, 6, 8),
@@ -71,8 +71,8 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
         userRepository.findUser(id).map{ result =>
           val user = result.value
           user.id.isDefined shouldBe true
-          user.firstname shouldBe userToInsert.firstname
-          user.lastname shouldBe userToInsert.lastname
+          user.firstName shouldBe userToInsert.firstName
+          user.lastName shouldBe userToInsert.lastName
           user.email shouldBe userToInsert.email
           user.password shouldBe userToInsert.password
           user.dateOfBirth shouldBe userToInsert.dateOfBirth
@@ -125,7 +125,7 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
       "return Unit when updating the user" in {
         val userRepository = createRepository
         val userToInsert = generateUser
-        val userToUpdate = generateUser.copy(firstname = Random.nextString(5), lastname = Random.nextString(5))
+        val userToUpdate = generateUser.copy(firstName = Random.nextString(5), lastName = Random.nextString(5))
         val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
 
         userRepository.updateUser(id, userToUpdate).unsafeRunSync //do the update object
@@ -133,8 +133,8 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
         userRepository.findUser(id).map {result =>
 
           val user = result.value
-          user.firstname shouldBe user.firstname
-          user.lastname shouldBe user.lastname
+          user.firstName shouldBe user.firstName
+          user.lastName shouldBe user.lastName
 
         }.unsafeToFuture
       }
