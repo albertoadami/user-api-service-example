@@ -2,7 +2,7 @@ import Dependencies._
 
 val commonSettings = Seq(
   organization := "it.adami",
-  scalaVersion := "2.13.6",
+  scalaVersion := "2.12.6",
   unusedCompileDependenciesFilter -=
     moduleFilter("org.slf4j", "log4j-over-slf4j"),
   unusedCompileDependenciesFilter -=
