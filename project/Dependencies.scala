@@ -17,19 +17,15 @@ object Dependencies {
 
   lazy val circeDependencies = Seq(
     "io.circe" %% "circe-config" % "0.8.0",
-    "io.circe"   %% "circe-generic" % "0.14.3"
+    "io.circe" %% "circe-generic" % "0.14.3"
   )
 
   val doobieVersion = "0.13.4"
   val databaseDependencies = Seq(
-    "org.tpolecat" %% "doobie-core"      % doobieVersion,
-    "org.tpolecat"          %% "doobie-hikari"          % doobieVersion,
-    "org.tpolecat" %% "doobie-postgres"  % doobieVersion,
-    "org.flywaydb"          %  "flyway-core"          % "6.3.1"
-  )
-
-  lazy val catsDependencies = Seq(
-    "org.typelevel" %% "cats-core" % "2.1.1"
+    "org.tpolecat" %% "doobie-core" % doobieVersion,
+    "org.tpolecat" %% "doobie-hikari" % doobieVersion,
+    "org.tpolecat" %% "doobie-postgres" % doobieVersion,
+    "org.flywaydb" % "flyway-core" % "6.3.1"
   )
 
   lazy val endToEndDependencies = Seq(

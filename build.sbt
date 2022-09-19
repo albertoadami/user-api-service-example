@@ -4,7 +4,7 @@ val commonSettings = Seq(
   organization := "it.adami",
   scalaVersion := "2.13.6",
   unusedCompileDependenciesFilter -=
-    moduleFilter("org.slf4j", "log4j-over-slf4j") ,
+    moduleFilter("org.slf4j", "log4j-over-slf4j"),
   unusedCompileDependenciesFilter -=
     moduleFilter("ch.qos.logback", "logback-classic"),
   unusedCompileDependenciesFilter -=
@@ -15,19 +15,17 @@ val buildInfoSettings = Seq(
   buildInfoOptions += BuildInfoOption.ToMap
 )
 
-
 lazy val service = (project in file("service"))
   .enablePlugins(DockerPlugin, JavaServerAppPackaging, BuildInfoPlugin)
   .settings(
     name := "user-api",
     coverageExcludedPackages := ".*user;.*user.config",
-      libraryDependencies ++=
+    libraryDependencies ++=
       http4sDependencies ++
-      loggingDependencies ++
-      circeDependencies ++
-      databaseDependencies ++
-      catsDependencies ++
-      testDependencies
+        loggingDependencies ++
+        circeDependencies ++
+        databaseDependencies ++
+        testDependencies
   )
   .configs(IntegrationTest)
   .settings(
@@ -45,10 +43,10 @@ lazy val `end-to-end` = (project in file("end-to-end"))
     scalacOptions += "-Ypartial-unification",
     libraryDependencies ++=
       http4sDependencies ++
-      circeDependencies ++
-      testDependencies ++
-      loggingDependencies ++
-      endToEndDependencies
+        circeDependencies ++
+        testDependencies ++
+        loggingDependencies ++
+        endToEndDependencies
   )
   .settings(commonSettings: _*)
   .settings(buildInfoSettings: _*)
@@ -58,8 +56,8 @@ lazy val performance = (project in file("perfomance"))
   .settings(
     name := "performance",
     dockerImageCreationTask := (publishLocal in Docker).value,
-      libraryDependencies ++=
-        loggingDependencies ++
+    libraryDependencies ++=
+      loggingDependencies ++
         performanceDependencies
   )
   .settings(commonSettings: _*)
