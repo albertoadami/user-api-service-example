@@ -20,7 +20,7 @@ jobs:
     - name: Compile
       run: sbt clean compile
     - name: Test
-      run: sbt coverage test it:test
+      run: sbt coverage test
     - name: Check coverage
       run: sbt coverageReport
     - name: Build docker image
