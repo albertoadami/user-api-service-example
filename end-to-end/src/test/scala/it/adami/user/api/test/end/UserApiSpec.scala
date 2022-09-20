@@ -104,13 +104,13 @@ class UserApiSpec extends SpecBase with EitherValues {
         val email = createUserRequest.hcursor.downField("email").as[String].right.value
         val (location, headers) = registerAndActivateUser(createUserRequest)
 
-        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath(s"$email")), method = GET)
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath(s"test")), method = GET)
           .withHeaders(headers)
 
         client
           .fetch(req) { response =>
             val json = response.as[Json].unsafeRunSync().hcursor.as[SearchUsersResponse].right.get
-            IO(json.items.isEmpty shouldBe true)
+            IO(json.items.isEmpty shouldBe false)
           }
           .unsafeToFuture()
 
