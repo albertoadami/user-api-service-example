@@ -13,32 +13,32 @@ import scala.util.Random
 class UserServiceSpec extends SpecBase with EitherValues {
 
   private val userRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(Some(1))
+    override def insert(user: User): IO[Option[Int]] = IO.pure(Some(1))
 
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
+    override def find(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
 
-    override def deleteUser(id: Int): IO[Int] = IO.pure(1)
+    override def delete(id: Int): IO[Int] = IO.pure(1)
 
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
 
-    override def findUserByEmail(email: String): IO[Option[User]] =
+    override def findByEmail(email: String): IO[Option[User]] =
       IO.pure(Some(UserDataGenerator.generateUser))
 
-    override def searchUsers(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq(UserDataGenerator.generateUser))
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq(UserDataGenerator.generateUser))
   }
 
   private val errorUserRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(None)
+    override def insert(user: User): IO[Option[Int]] = IO.pure(None)
 
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(None)
+    override def find(id: Int): IO[Option[User]] = IO.pure(None)
 
-    override def deleteUser(id: Int): IO[Int] = IO.pure(0)
+    override def delete(id: Int): IO[Int] = IO.pure(0)
 
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
 
-    override def findUserByEmail(email: String): IO[Option[User]] = IO.pure(None)
+    override def findByEmail(email: String): IO[Option[User]] = IO.pure(None)
 
-    override def searchUsers(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
 
   private val userService = new UserService(userRepository)

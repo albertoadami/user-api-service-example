@@ -14,7 +14,7 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
 
   def createUser(createUserRequest: CreateUserRequest): IO[Either[CreateUserError, Int]] = {
 
-    userRepository.insertUser(createUserRequest).map {
+    userRepository.insert(createUserRequest).map {
       case Some(id) =>
         logger.info(s"Generated a new user with id $id")
         Right(id)
@@ -25,10 +25,10 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
   }
 
   def findUser(id: Int): IO[Option[UserDetailResponse]] =
-    userRepository.findUser(id).map { result => result.map(convertToUserDetail) }
+    userRepository.find(id).map { result => result.map(convertToUserDetail) }
 
   def deleteUser(id: Int): IO[Either[GenericError, Unit]] =
-    userRepository.deleteUser(id) map { value =>
+    userRepository.delete(id) map { value =>
       if (value == 0) {
         logger.info(s"Not found user with id $id")
         Left(UserNotFound)
@@ -36,7 +36,7 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
     }
 
   def updateUser(id: Int, updateUserRequest: UpdateUserRequest): IO[Either[GenericError, Unit]] =
-    userRepository.findUser(id).flatMap {
+    userRepository.find(id).flatMap {
       case Some(user) =>
         val updatedUser = user
           .copy(
@@ -48,7 +48,7 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
           )
 
         userRepository
-          .updateUser(id, updatedUser)
+          .update(id, updatedUser)
           .map(_ => Right())
       case None =>
         logger.info(s"Not found user with id $id")
@@ -56,19 +56,19 @@ class UserService(userRepository: UserRepository) extends LazyLogging {
     }
 
   def activateUser(id: Int): IO[Unit] =
-    userRepository.findUser(id) flatMap {
+    userRepository.find(id) flatMap {
       case Some(user) =>
         val updatedUser = user.copy(
           enabled = true,
           lastUpdatedDate = Some(Timestamp.valueOf(LocalDateTime.now()))
         )
         userRepository
-          .updateUser(id, updatedUser)
+          .update(id, updatedUser)
           .map(_ => Right())
     }
 
   def searchUsers(loggedUser: Int, query: String): IO[SearchUsersResponse] =
     userRepository
-      .searchUsers(loggedUser, query)
+      .search(loggedUser, query)
       .map(result => SearchUsersResponse(result.map(convertToUserSearchDetail)))
 }

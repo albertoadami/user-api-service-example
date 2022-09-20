@@ -8,7 +8,7 @@ import it.adami.api.user.domain.User
 
 final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
-  override def insertUser(user: User): IO[Option[Int]] = {
+  override def insert(user: User): IO[Option[Int]] = {
     val insertQuery =
       sql"""
            INSERT INTO users(firstname, lastname, email, password, birthday_date, gender, creation_date, enabled)
@@ -36,7 +36,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
 
   }
 
-  override def findUser(id: Int): IO[Option[User]] = {
+  override def find(id: Int): IO[Option[User]] = {
     sql"""
           SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
           FROM users u
@@ -47,14 +47,14 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
       .transact(xa)
   }
 
-  override def deleteUser(id: Int): IO[Int] =
+  override def delete(id: Int): IO[Int] =
     sql"""
          DELETE FROM users
          WHERE id = $id
         """.stripMargin.update.run
       .transact(xa)
 
-  override def updateUser(id: Int, user: User): IO[Unit] =
+  override def update(id: Int, user: User): IO[Unit] =
     sql"""
          UPDATE users
          SET firstname = ${user.firstName},
@@ -67,7 +67,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
       .transact(xa)
       .map(_ => ())
 
-  override def findUserByEmail(email: String): IO[Option[User]] =
+  override def findByEmail(email: String): IO[Option[User]] =
     sql"""
           SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
           FROM users u
@@ -77,7 +77,7 @@ final class DoobieUserRepository(xa: Transactor[IO]) extends UserRepository {
       .option
       .transact(xa)
 
-  override def searchUsers(user: Int, search: String): IO[Seq[User]] =
+  override def search(user: Int, search: String): IO[Seq[User]] =
     sql"""
          SELECT id, firstname, lastname, email, password, birthday_date, gender, creation_date, enabled, last_updated_date
          FROM users u

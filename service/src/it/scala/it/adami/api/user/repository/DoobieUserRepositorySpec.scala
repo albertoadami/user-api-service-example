@@ -34,12 +34,12 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
 
   "DoobieUserRepository" when {
 
-    "insertUser(user) is called" should {
+    "insert(user) is called" should {
       "return the id of the inserted user if it's a new user" in {
         val userRepository = createRepository
 
         userRepository
-          .insertUser(generateUser)
+          .insert(generateUser)
           .map(value => value.isDefined shouldBe true)
           .unsafeRunSync()
 
@@ -49,16 +49,16 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
         val userRepository = createRepository
         val user = generateUser
 
-        userRepository.insertUser(user).unsafeRunSync() // insert the first user
-        userRepository.insertUser(generateUser.copy(email = user.email)).map(_.isEmpty shouldBe true).unsafeToFuture()
+        userRepository.insert(user).unsafeRunSync() // insert the first user
+        userRepository.insert(generateUser.copy(email = user.email)).map(_.isEmpty shouldBe true).unsafeToFuture()
       }
     }
 
-    "findUser(id) is called" should {
+    "find(id) is called" should {
       "return None if the id doesn't exist" in {
         val userRepository = createRepository
         createRepository
-          .findUser(9999999).map(_.isEmpty shouldBe true)
+          .find(9999999).map(_.isEmpty shouldBe true)
           .unsafeToFuture()
 
       }
@@ -66,9 +66,9 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
       "return the user if the id exist" in {
         val userRepository = createRepository
         val userToInsert = generateUser
-        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+        val id = createRepository.insert(userToInsert).unsafeRunSync().get//get the id generated
 
-        userRepository.findUser(id).map{ result =>
+        userRepository.find(id).map{ result =>
           val user = result.value
           user.id.isDefined shouldBe true
           user.firstName shouldBe userToInsert.firstName
@@ -86,18 +86,18 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
 
     }
 
-    "findUserByEmail(email) is called" should {
+    "findByEmail(email) is called" should {
       "return None if an user with the email doesn't exist" in {
         val userRepository = createRepository
-        createRepository.findUserByEmail("test@test.com").map(_.isEmpty shouldBe true).unsafeToFuture
+        createRepository.findByEmail("test@test.com").map(_.isEmpty shouldBe true).unsafeToFuture
       }
 
       "return the user if an user with email exist" in {
         val userRepository = createRepository
         val userToInsert = generateUser
-        createRepository.insertUser(userToInsert).unsafeRunSync()
+        createRepository.insert(userToInsert).unsafeRunSync()
 
-        createRepository.findUserByEmail(userToInsert.email).map{ result =>
+        createRepository.findByEmail(userToInsert.email).map{ result =>
 
           val user = result.value
           user.email shouldBe userToInsert.email
@@ -106,31 +106,31 @@ class DoobieUserRepositorySpec extends DatabaseSpec with ForAllTestContainer wit
       }
     }
 
-    "deleteUser(id) is called" should {
+    "delete(id) is called" should {
       "return 1 if the id exist" in {
         val userRepository = createRepository
         val userToInsert = generateUser
-        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+        val id = createRepository.insert(userToInsert).unsafeRunSync().get//get the id generated
 
-        userRepository.deleteUser(id).map(result => result shouldBe 1).unsafeToFuture
+        userRepository.delete(id).map(result => result shouldBe 1).unsafeToFuture
       }
       "return 0 if the id doesn't exist" in {
         val userRepository = createRepository
-        userRepository.deleteUser(999).map(result => result shouldBe 0).unsafeToFuture
+        userRepository.delete(999).map(result => result shouldBe 0).unsafeToFuture
 
       }
     }
 
-    "updateUser(id, user) is called" should {
+    "update(id, user) is called" should {
       "return Unit when updating the user" in {
         val userRepository = createRepository
         val userToInsert = generateUser
         val userToUpdate = generateUser.copy(firstName = Random.nextString(5), lastName = Random.nextString(5))
-        val id = createRepository.insertUser(userToInsert).unsafeRunSync().get//get the id generated
+        val id = createRepository.insert(userToInsert).unsafeRunSync().get//get the id generated
 
-        userRepository.updateUser(id, userToUpdate).unsafeRunSync //do the update object
+        userRepository.update(id, userToUpdate).unsafeRunSync //do the update object
 
-        userRepository.findUser(id).map {result =>
+        userRepository.find(id).map { result =>
 
           val user = result.value
           user.firstName shouldBe user.firstName

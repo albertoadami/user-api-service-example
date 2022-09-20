@@ -8,8 +8,9 @@ import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
 import io.circe.generic.auto._
+import org.scalatest.EitherValues
 
-class UserApiSpec extends SpecBase {
+class UserApiSpec extends SpecBase with EitherValues {
 
   private case class SearchUserItem(
       id: Int,
@@ -86,7 +87,7 @@ class UserApiSpec extends SpecBase {
       "return Ok with empty results if no user is found" in {
         val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
 
-        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath("invalid_search_query")), method = POST)
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath("invalid_search_query")), method = GET)
           .withHeaders(headers)
 
         client
@@ -97,6 +98,24 @@ class UserApiSpec extends SpecBase {
           .unsafeToFuture()
 
       }
+
+      "return Ok with the results if some users is found" in {
+        val createUserRequest = JsonBuilder.createRequestJson
+        val email = createUserRequest.hcursor.downField("email").as[String].right.value
+        val (location, headers) = registerAndActivateUser(createUserRequest)
+
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath(s"$email")), method = GET)
+          .withHeaders(headers)
+
+        client
+          .fetch(req) { response =>
+            val json = response.as[Json].unsafeRunSync().hcursor.as[SearchUsersResponse].right.get
+            IO(json.items.isEmpty shouldBe true)
+          }
+          .unsafeToFuture()
+
+      }
+
     }
 
   }

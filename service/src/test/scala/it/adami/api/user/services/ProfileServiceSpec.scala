@@ -15,17 +15,17 @@ class ProfileServiceSpec extends SpecBase with OptionValues {
   private val testUser = UserDataGenerator.generateUser.copy(id = Some(Random.nextInt()))
 
   private val userRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(None)
+    override def insert(user: User): IO[Option[Int]] = IO.pure(None)
 
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(Some(testUser))
+    override def find(id: Int): IO[Option[User]] = IO.pure(Some(testUser))
 
-    override def findUserByEmail(email: String): IO[Option[User]] = IO.pure(None)
+    override def findByEmail(email: String): IO[Option[User]] = IO.pure(None)
 
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
 
-    override def deleteUser(id: Int): IO[Int] = IO(Random.nextInt(1))
+    override def delete(id: Int): IO[Int] = IO(Random.nextInt(1))
 
-    override def searchUsers(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
   private val profileService = new ProfileService(userRepository)
 
