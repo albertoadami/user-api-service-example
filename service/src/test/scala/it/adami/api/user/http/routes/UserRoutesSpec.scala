@@ -4,7 +4,7 @@ import cats.effect.IO
 import io.circe.Json
 import it.adami.api.user.services.UserService
 import it.adami.api.user.data.UserDataGenerator
-import org.http4s.Request
+import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
 import org.http4s.implicits._
@@ -12,12 +12,22 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import it.adami.api.user.SpecBase
 import it.adami.api.user.errors.UserNotFound
-import org.mockito.MockitoSugar
+import it.adami.api.user.http.json.SearchUsersResponse
+import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.{BeforeAndAfterEach, EitherValues, OptionValues}
 
-class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with EitherValues with BeforeAndAfterEach {
+import scala.util.Random
+
+class UserRoutesSpec
+    extends SpecBase
+    with MockitoSugar
+    with ArgumentMatchersSugar
+    with OptionValues
+    with EitherValues
+    with BeforeAndAfterEach {
 
   private val updateRequest = UserDataGenerator.generateUpdateUserRequest
+  private val searchUsersResponse = UserDataGenerator.generateUserSearchResponse
 
   private val userService = mock[UserService]
   private val userRoutes = new UserRoutes(userService, mockAuthMiddleWare).routes.orNotFound
@@ -49,6 +59,38 @@ class UserRoutesSpec extends SpecBase with MockitoSugar with OptionValues with E
         hcursor.get[String]("dateOfBirth").right.value shouldBe userGenerated.dateOfBirth
       }
 
+    }
+
+    "GET /users?search={query}" should {
+      "return Ok with the list of users that meets the criteria" in {
+        val query = Random.nextString(5)
+        when(userService.searchUsers(anyInt, any[String]))
+          .thenReturn(IO.pure(SearchUsersResponse(Seq(searchUsersResponse))))
+
+        val response = userRoutes
+          .run(Request(uri = Uri.unsafeFromString("/users?search=$query")))
+          .unsafeRunSync()
+
+        response.status shouldBe Ok
+
+        val json = response.as[Json].unsafeRunSync.hcursor.as[SearchUsersResponse].right.get
+        json.items shouldBe Seq(searchUsersResponse)
+
+      }
+      "return Ok with empty list when the query doesn't match with any user" in {
+        val query = Random.nextString(5)
+        when(userService.searchUsers(anyInt, any[String]))
+          .thenReturn(IO.pure(SearchUsersResponse(Seq())))
+        val response = userRoutes
+          .run(Request(uri = Uri.unsafeFromString("/users?search=$query")))
+          .unsafeRunSync()
+
+        response.status shouldBe Ok
+
+        val json = response.as[Json].unsafeRunSync.hcursor.as[SearchUsersResponse].right.get
+        json.items.isEmpty shouldBe true
+
+      }
     }
 
     "DELETE /users/{id} is called" should {

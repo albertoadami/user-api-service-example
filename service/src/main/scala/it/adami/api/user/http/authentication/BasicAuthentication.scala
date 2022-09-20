@@ -10,7 +10,7 @@ final class BasicAuthentication(val userRepository: UserRepository) extends Auth
       email: String,
       password: String
   ): IO[Either[ErrorsResponse, UserInfo]] =
-    userRepository.findUserByEmail(email) map {
+    userRepository.findByEmail(email) map {
       case Some(user) =>
         if (user.password == password) Right(UserInfo(id = user.id.get, enabled = user.enabled))
         else Left(ErrorsResponse(List(ErrorItem(errorDescription = "password is not correct"))))

@@ -32,6 +32,7 @@ lazy val service = (project in file("service"))
 
 lazy val `end-to-end` = (project in file("end-to-end"))
   .enablePlugins(BuildInfoPlugin)
+  .dependsOn(service)
   .settings(
     name := "end-to-end",
     scalacOptions += "-Ypartial-unification",

@@ -1,12 +1,23 @@
 package it.adami.user.api.test.end
 
 import cats.effect.IO
+import io.circe.Json
+import it.adami.api.user.http.json.SearchUsersResponse
 import it.adami.user.api.test.end.common.JsonBuilder
 import org.http4s.{Request, Uri}
 import org.http4s.circe._
 import org.http4s.dsl.io._
+import io.circe.generic.auto._
+import org.scalatest.EitherValues
 
-class UserApiSpec extends SpecBase {
+class UserApiSpec extends SpecBase with EitherValues {
+
+  private case class SearchUserItem(
+      id: Int,
+      firstname: String,
+      lastname: String,
+      email: String
+  )
 
   val notExistingId = 99999 //id that I know doesn't exist
 
@@ -70,6 +81,41 @@ class UserApiSpec extends SpecBase {
             .withEntity(JsonBuilder.updateRequestJson)
         client.status(updateReq).map(_.code shouldBe 404).unsafeToFuture
       }
+    }
+
+    s"GET /api/$apiVersion/users?search={query} is called" should {
+      "return Ok with empty results if no user is found" in {
+        val (location, headers) = registerAndActivateUser(JsonBuilder.createRequestJson)
+
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath("invalid_search_query")), method = GET)
+          .withHeaders(headers)
+
+        client
+          .fetch(req) { response =>
+            val json = response.as[Json].unsafeRunSync().hcursor.as[SearchUsersResponse].right.get
+            IO(json.items.isEmpty shouldBe true)
+          }
+          .unsafeToFuture()
+
+      }
+
+      "return Ok with the results if some users is found" in {
+        val createUserRequest = JsonBuilder.createRequestJson
+        val email = createUserRequest.hcursor.downField("email").as[String].right.value
+        val (location, headers) = registerAndActivateUser(createUserRequest)
+
+        val req = Request[IO](uri = Uri.unsafeFromString(searchUsersApiPath(s"test")), method = GET)
+          .withHeaders(headers)
+
+        client
+          .fetch(req) { response =>
+            val json = response.as[Json].unsafeRunSync().hcursor.as[SearchUsersResponse].right.get
+            IO(json.items.isEmpty shouldBe false)
+          }
+          .unsafeToFuture()
+
+      }
+
     }
 
   }

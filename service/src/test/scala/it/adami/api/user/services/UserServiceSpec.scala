@@ -8,31 +8,37 @@ import it.adami.api.user.errors.{UserNameAlreadyInUse, UserNotFound}
 import it.adami.api.user.repository.UserRepository
 import org.scalatest.EitherValues
 
+import scala.util.Random
+
 class UserServiceSpec extends SpecBase with EitherValues {
 
   private val userRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(Some(1))
+    override def insert(user: User): IO[Option[Int]] = IO.pure(Some(1))
 
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
+    override def find(id: Int): IO[Option[User]] = IO.pure(Some(UserDataGenerator.generateUser))
 
-    override def deleteUser(id: Int): IO[Int] = IO.pure(1)
+    override def delete(id: Int): IO[Int] = IO.pure(1)
 
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
 
-    override def findUserByEmail(email: String): IO[Option[User]] =
+    override def findByEmail(email: String): IO[Option[User]] =
       IO.pure(Some(UserDataGenerator.generateUser))
+
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq(UserDataGenerator.generateUser))
   }
 
   private val errorUserRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(None)
+    override def insert(user: User): IO[Option[Int]] = IO.pure(None)
 
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(None)
+    override def find(id: Int): IO[Option[User]] = IO.pure(None)
 
-    override def deleteUser(id: Int): IO[Int] = IO.pure(0)
+    override def delete(id: Int): IO[Int] = IO.pure(0)
 
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
 
-    override def findUserByEmail(email: String): IO[Option[User]] = IO.pure(None)
+    override def findByEmail(email: String): IO[Option[User]] = IO.pure(None)
+
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
 
   private val userService = new UserService(userRepository)
@@ -109,6 +115,23 @@ class UserServiceSpec extends SpecBase with EitherValues {
             .unsafeRunSync
         result.left.value shouldBe UserNotFound
       }
+    }
+
+    "searchUsers() is called" should {
+      "return the list of users that match the search query" in {
+        userService
+          .searchUsers(1, Random.nextString(5))
+          .map(_.items.isEmpty shouldBe false)
+          .unsafeToFuture
+      }
+
+      "return an empty result it there aren't users that match the query" in {
+        errorUserService
+          .searchUsers(1, Random.nextString(5))
+          .map(_.items.isEmpty shouldBe true)
+          .unsafeToFuture
+      }
+
     }
 
   }

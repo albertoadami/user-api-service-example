@@ -3,7 +3,8 @@ package it.adami.api.user.data
 import java.sql.Timestamp
 
 import it.adami.api.user.domain.User
-import it.adami.api.user.http.json.{CreateUserRequest, UpdateUserRequest, UserDetailResponse, UserProfileResponse}
+import it.adami.api.user.http.json.UserProfileResponse
+import it.adami.api.user.http.json.{CreateUserRequest, SearchUserItem, UpdateUserRequest, UserDetailResponse}
 import it.adami.api.user.util.StringUtils
 
 import scala.util.Random
@@ -48,6 +49,17 @@ object UserDataGenerator {
     UserDetailResponse(
       firstname = Random.nextString(5),
       lastname = Random.nextString(5),
+      email = Random.nextString(5),
+      dateOfBirth = "07-07-2000",
+      gender = "MALE",
+      creationDate = "09-09-2012"
+    )
+
+  def generateUserSearchResponse: SearchUserItem =
+    SearchUserItem(
+      id = Random.nextInt(5),
+      firstName = Random.nextString(5),
+      lastName = Random.nextString(5),
       email = Random.nextString(5),
       dateOfBirth = "07-07-2000",
       gender = "MALE",

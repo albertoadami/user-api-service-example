@@ -18,12 +18,13 @@ class BasicAuthenticationSpec extends SpecBase {
   private val user = UserDataGenerator.generateUser
 
   private val userRepository = new UserRepository {
-    override def insertUser(user: User): IO[Option[Int]] = IO.pure(None)
-    override def findUser(id: Int): IO[Option[User]] = IO.pure(None)
-    override def findUserByEmail(email: String): IO[Option[User]] =
+    override def insert(user: User): IO[Option[Int]] = IO.pure(None)
+    override def find(id: Int): IO[Option[User]] = IO.pure(None)
+    override def findByEmail(email: String): IO[Option[User]] =
       IO.pure(Some(user.copy(email = email)))
-    override def updateUser(id: Int, user: User): IO[Unit] = IO.pure(())
-    override def deleteUser(id: Int): IO[Int] = IO.pure(1)
+    override def update(id: Int, user: User): IO[Unit] = IO.pure(())
+    override def delete(id: Int): IO[Int] = IO.pure(1)
+    override def search(user: Int, search: String): IO[Seq[User]] = IO.pure(Seq.empty)
   }
 
   val authentication = Authentication.basic(userRepository)
